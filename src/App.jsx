@@ -3,11 +3,9 @@ import OrgChart from './components/OrgChart.jsx'
 import Logo from './components/Logo.jsx'
 import Toolbar from './components/Toolbar.jsx'
 import PasswordGate from './components/PasswordGate.jsx'
-import { ChartOptionsContext } from './ChartOptionsContext.js'
 import './App.css'
 
 export default function App() {
-  const [showTitles, setShowTitles] = useState(true)
   const [isSavingPdf, setIsSavingPdf] = useState(false)
   const orgChartRef = useRef(null)
 
@@ -28,17 +26,10 @@ export default function App() {
       <div className="oc-app">
         <header className="oc-header">
           <Logo />
-          <Toolbar
-            showTitles={showTitles}
-            onToggleTitles={() => setShowTitles((v) => !v)}
-            onSavePdf={handleSavePdf}
-            isSavingPdf={isSavingPdf}
-          />
+          <Toolbar onSavePdf={handleSavePdf} isSavingPdf={isSavingPdf} />
         </header>
         <main className="oc-main">
-          <ChartOptionsContext.Provider value={{ showTitles }}>
-            <OrgChart ref={orgChartRef} />
-          </ChartOptionsContext.Provider>
+          <OrgChart ref={orgChartRef} />
         </main>
       </div>
     </PasswordGate>

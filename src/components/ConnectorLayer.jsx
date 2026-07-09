@@ -1,7 +1,6 @@
-import { useContext, useLayoutEffect, useState } from 'react'
+import { useLayoutEffect, useState } from 'react'
 import { layout } from '../data/org.js'
 import { getTeam } from '../data/selectors.js'
-import { ChartOptionsContext } from '../ChartOptionsContext.js'
 import './ConnectorLayer.css'
 
 // ── Which nodes each bus connects (derived from the layout) ──────────────────
@@ -144,7 +143,6 @@ function curvedBusPath(m, kids) {
 // construction (box() divides it back out), this recompute is cheap and safe
 // to run on every zoom tick rather than needing a stale-closure workaround.
 export default function ConnectorLayer({ canvasRef, anchorsRef, scale }) {
-  const { showTitles } = useContext(ChartOptionsContext)
   const [{ width, height, paths, lineColor }, setState] = useState({
     width: 0,
     height: 0,
@@ -203,7 +201,7 @@ export default function ConnectorLayer({ canvasRef, anchorsRef, scale }) {
       ro.disconnect()
       window.removeEventListener('resize', recompute)
     }
-  }, [canvasRef, anchorsRef, showTitles, scale])
+  }, [canvasRef, anchorsRef, scale])
 
   return (
     <svg className="oc-canvas__lines" width={width} height={height} aria-hidden="true">
