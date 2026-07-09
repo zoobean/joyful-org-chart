@@ -28,7 +28,20 @@
   border-left: var(--oc-line-weight) solid var(--oc-line);
 }
 
-/* Leader variant: spine runs out the bottom of the block to the bus below. */
+/* Leader variant: spine runs out the bottom of the block to the bus below —
+   stop exactly at the row's own bottom edge (unlike the team variant, which
+   reaches further to meet its own CSS elbow) so the SVG bus's drop (see
+   curvedBusPath in ConnectorLayer) is the only thing drawing the visible gap
+   before the curve, rather than this stub overlapping and hiding it. */
 .oc-pill-row--spine-out::before {
-  bottom: -12px;
+  bottom: 0;
+}
+
+/* Zero out this row's own bottom margin so the gap down to the sub-column
+   row is governed by a single value (.oc-leader-wrap's margin-bottom) rather
+   than two margins that collapse together (taking their max, not their sum)
+   — which silently undercut .oc-leader-wrap's own margin and reintroduced
+   the too-tight gap it was meant to fix. */
+.oc-pill-row--spine-out {
+  margin-bottom: 0;
 }

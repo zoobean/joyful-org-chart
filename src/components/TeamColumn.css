@@ -43,3 +43,15 @@
   bottom: -8px;
   border-left: var(--oc-line-weight) solid var(--oc-line);
 }
+
+/* The elbow's height (hence where its curve lands) is normally a fixed 20px
+   from the card's top — fine for single-line cards, but visibly off-center
+   on any card whose title wraps to two lines. Retarget it to the card's own
+   vertical center instead. Only safe for leaf nodes: a node with its own
+   nested .oc-children is much taller than its card (it includes its
+   children too), so 50% of *that* height would land the curve well past
+   the card entirely — those keep the fixed offset. */
+.oc-children > .oc-node:not(:has(> .oc-children))::before {
+  height: calc(50% + 8px);
+}
+

@@ -13,7 +13,7 @@ import { jsPDF } from 'jspdf'
 import 'svg2pdf.js' // side-effect import: adds pdf.svg(element, opts) to jsPDF
 import PersonCard from './PersonCard.jsx'
 import TeamPill from './TeamPill.jsx'
-import TeamColumn from './TeamColumn.jsx'
+import TeamColumn, { ReportNode } from './TeamColumn.jsx'
 import ConnectorLayer from './ConnectorLayer.jsx'
 import { layout } from '../data/org.js'
 import { getPerson, getTeam } from '../data/selectors.js'
@@ -43,6 +43,25 @@ function ExtraColumn({ id, slim, register }) {
   )
 }
 
+// A column that's just a chunk of the group leader's own direct reports — no
+// team/head/pill of its own (e.g. Dave Hopp's reports split across two
+// columns). Every entry here is a PEER (all direct reports of the same
+// leader), not a parent-child chain, so each registers as its own connector
+// anchor and gets its own curved entry straight from the group's bus — same
+// as Kelly Burke/Akshat do in a team-based sub-column. No shared indent: a
+// person's OWN reports (Lauren's Andrea et al) still nest normally underneath
+// their own card via ReportNode's usual recursion, just not relative to
+// their flat-list siblings (Michael, Haven, ...).
+function ReportColumn({ ids, slim, register }) {
+  return (
+    <div className={slim ? 'oc-col oc-col--slim' : 'oc-col'}>
+      {ids.map((id) => (
+        <ReportNode key={id} person={getPerson(id)} register={register} />
+      ))}
+    </div>
+  )
+}
+
 // A group: a leader card (Lainey) that spans a row of sub-columns. The leader's
 // pill uses the spine-out variant so its spine continues down to the bus that
 // feeds the sub-column heads. The whole block (card + pill) is the connector
@@ -60,14 +79,18 @@ function Group({ group, register }) {
         </div>
       </div>
       <div className="oc-group-cols">
-        {group.columns.map((col) => (
-          <Fragment key={col.team}>
-            <TeamColumn team={getTeam(col.team)} slim={col.slim} showLabel={col.showLabel} register={register} />
-            {(col.extras || []).map((id) => (
-              <ExtraColumn key={id} id={id} slim={col.slim} register={register} />
-            ))}
-          </Fragment>
-        ))}
+        {group.columns.map((col, i) =>
+          col.reports ? (
+            <ReportColumn key={i} ids={col.reports} slim={col.slim} register={register} />
+          ) : (
+            <Fragment key={col.team}>
+              <TeamColumn team={getTeam(col.team)} slim={col.slim} showLabel={col.showLabel} register={register} />
+              {(col.extras || []).map((id) => (
+                <ExtraColumn key={id} id={id} slim={col.slim} register={register} />
+              ))}
+            </Fragment>
+          )
+        )}
       </div>
     </div>
   )
@@ -80,6 +103,17 @@ const OrgChart = forwardRef(function OrgChart(_props, ref) {
   const anchorsRef = useRef(new Map())
   const dragRef = useRef(null)
   const [view, setView] = useState({ x: FIT_PADDING, y: FIT_PADDING, scale: 1 })
+  // Dragging tracks the pointer 1:1 (no transition — anything else lags
+  // behind the cursor), but every other view change (wheel, buttons,
+  // double-click, the resize re-fit below) eases smoothly instead of
+  // snapping straight to its target.
+  const [isPanning, setIsPanning] = useState(false)
+  // Print/export force the view to scale 1 and read the result within a
+  // couple of animation frames — an eased transition there would get
+  // captured mid-animation, at the wrong scale/position. Suppressed
+  // separately from isPanning since it brackets an async operation, not a
+  // single drag gesture.
+  const [isSnapping, setIsSnapping] = useState(false)
 
   // Returns a ref callback that registers/unregisters an anchor card by id.
   const register = useCallback(
@@ -116,6 +150,26 @@ const OrgChart = forwardRef(function OrgChart(_props, ref) {
     fitToView()
   }, [fitToView])
 
+  // Re-fit (and re-center) whenever the viewport itself resizes — e.g. the
+  // browser window is resized, or a sidebar toggles — rather than only once
+  // on mount. rAF-throttled since resize fires continuously while a window
+  // edge is being dragged.
+  useEffect(() => {
+    let raf = null
+    const onResize = () => {
+      if (raf) return
+      raf = requestAnimationFrame(() => {
+        raf = null
+        fitToView()
+      })
+    }
+    window.addEventListener('resize', onResize)
+    return () => {
+      window.removeEventListener('resize', onResize)
+      if (raf) cancelAnimationFrame(raf)
+    }
+  }, [fitToView])
+
   // Mirrors `view` in a ref so effects that must attach exactly once (print,
   // export) can always read the LATEST view without listing it as a
   // dependency — see the comment on the print effect below for why that
@@ -140,10 +194,12 @@ const OrgChart = forwardRef(function OrgChart(_props, ref) {
     let saved = null
     const onBeforePrint = () => {
       saved = viewRef.current
+      setIsSnapping(true)
       setView({ x: 0, y: 0, scale: 1 })
     }
     const onAfterPrint = () => {
       if (saved) setView(saved)
+      setIsSnapping(false)
     }
     window.addEventListener('beforeprint', onBeforePrint)
     window.addEventListener('afterprint', onAfterPrint)
@@ -227,6 +283,7 @@ const OrgChart = forwardRef(function OrgChart(_props, ref) {
     if (!canvas || !linesEl || !logoEl) return
 
     const saved = viewRef.current
+    setIsSnapping(true)
     setView({ x: 0, y: 0, scale: 1 })
     // Two rAFs: the first fires before the next paint is scheduled, the
     // second after it has happened — so by then the scale-1 layout (and any
@@ -285,6 +342,7 @@ const OrgChart = forwardRef(function OrgChart(_props, ref) {
     } finally {
       linesEl.style.display = prevLinesDisplay
       setView(saved)
+      setIsSnapping(false)
     }
   }, [drawConnectorPathD])
 
@@ -343,6 +401,7 @@ const OrgChart = forwardRef(function OrgChart(_props, ref) {
   const handlePointerDown = useCallback((e) => {
     if (e.button !== 0 || e.target.closest('.oc-zoom-controls')) return
     dragRef.current = { startX: e.clientX, startY: e.clientY }
+    setIsPanning(true)
     e.currentTarget.setPointerCapture(e.pointerId)
   }, [])
 
@@ -358,6 +417,7 @@ const OrgChart = forwardRef(function OrgChart(_props, ref) {
 
   const endDrag = useCallback((e) => {
     dragRef.current = null
+    setIsPanning(false)
     e.currentTarget.releasePointerCapture?.(e.pointerId)
   }, [])
 
@@ -374,7 +434,10 @@ const OrgChart = forwardRef(function OrgChart(_props, ref) {
       <div
         className="oc-canvas"
         ref={canvasRef}
-        style={{ transform: `translate(${view.x}px, ${view.y}px) scale(${view.scale})` }}
+        style={{
+          transform: `translate(${view.x}px, ${view.y}px) scale(${view.scale})`,
+          transition: isPanning || isSnapping ? 'none' : 'transform 220ms cubic-bezier(0.22, 1, 0.36, 1)',
+        }}
       >
         <div className="oc-content">
           <div className="oc-ceo-row">

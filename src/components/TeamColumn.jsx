@@ -5,12 +5,16 @@ import './TeamColumn.css'
 
 // A report and its descendants. The CSS elbow spine (see TeamColumn.css) is
 // driven purely by the `.oc-children > .oc-node` structure, so recursion is
-// all that's needed here. Report cards are not connector anchors, so they take
-// no ref.
-function ReportNode({ person }) {
+// all that's needed here. Report cards are connector anchors only when
+// explicitly registered — a plain `{ reports }` layout column (see
+// ReportColumn in OrgChart.jsx) registers its top-level entries directly
+// (each drawn by the SVG bus, not a CSS elbow, since they're flat peers, not
+// each other's parent/child), but recursive calls below never pass `register`
+// on, since nested reports only ever need the local CSS spine.
+export function ReportNode({ person, register }) {
   return (
     <div className="oc-node">
-      <PersonCard person={person} />
+      <PersonCard ref={register?.(person.id)} person={person} />
       {person.reports.length > 0 && (
         <div className="oc-children">
           {person.reports.map((r) => (

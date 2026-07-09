@@ -60,33 +60,53 @@
   z-index: 1;
 }
 
+/* Close to (but not exactly) the same gap every other pill-to-first-row span
+   below uses (8px pill margin + 12px leader-wrap margin — see
+   .oc-leader-wrap): the bus's own manager-side turn needs enough room below
+   the card for a real straight drop before curving into the rail (radius 7,
+   landing 10px above the rail — see ConnectorLayer's curvedBusPath), which a
+   plain 16px total leaves with none. Felix has no pill, so his own margin
+   covers that whole 20px alone. */
 .oc-ceo-row {
-  margin-bottom: 40px;
+  margin-bottom: 20px;
 }
 
 .oc-ceo-row .oc-card {
   width: 208px;
 }
 
+/* Indented for the same reason as .oc-group-cols below: the first column's
+   incoming curve (drops 10px left of its own card) needs to line up with
+   Felix's own spine-out line above it (Felix's leftX, card.left + 11):
+   21px = 11 + 10. */
 .oc-columns {
   display: flex;
   gap: 20px;
   align-items: flex-start;
+  margin-left: 21px;
 }
 
-/* Group: leader card spanning a row of sub-columns. Must stay tall enough for
-   the bus rail 18px above the sub-column heads, plus the leader pill's own
-   line (extends 12px past the pill) — below ~30px the two would overlap. */
+/* Group: leader card spanning a row of sub-columns. The leader pill's own
+   margin-bottom is zeroed for this variant (see .oc-pill-row--spine-out) so
+   this is the ONLY margin governing the gap down to the sub-column row —
+   matching .oc-ceo-row's own 20px above, since both need the same room for
+   the bus's manager-side turn (a straight drop before curving into the rail;
+   see ConnectorLayer's curvedBusPath). */
 .oc-leader-wrap {
-  margin-bottom: 32px;
+  margin-bottom: 20px;
 }
 
 .oc-leader-block {
   width: 200px;
 }
 
+/* Indented so the first sub-column's incoming curve (which drops 10px left
+   of its own card — see ConnectorLayer's gx) lines up exactly with the
+   leader's own spine-out line above it (leader's leftX, card.left + 11):
+   21px = 11 + 10. */
 .oc-group-cols {
   display: flex;
   gap: 20px;
   align-items: flex-start;
+  margin-left: 21px;
 }

@@ -12,13 +12,15 @@ const columnAnchor = (col) => (col.group ? col.group.leader : getTeam(col.team).
 const ceoTargets = layout.columns.map(columnAnchor)
 
 // Each group leader → its sub-column heads plus any extras beside them
-// (Lindsey, Don) — every one is an equal bus target, dropping straight into
-// its own card from the shared rail.
+// (Lindsey, Don), or every id in a plain `{ reports }` column (Dave Hopp's
+// own direct reports, split across columns with no team head) — all equal
+// bus targets, since a `{ reports }` column is a flat list of peers, not a
+// parent-child chain (see ReportColumn).
 const groupBuses = layout.columns
   .filter((col) => col.group)
   .map((col) => ({
     leader: col.group.leader,
-    targets: col.group.columns.flatMap((c) => [getTeam(c.team).head, ...(c.extras || [])]),
+    targets: col.group.columns.flatMap((c) => (c.reports ? c.reports : [getTeam(c.team).head, ...(c.extras || [])])),
   }))
 
 // ── Geometry (ported from the reference) ─────────────────────────────────────
@@ -35,7 +37,21 @@ function box(el, cRect, scale) {
     left: (r.left - cRect.left) / scale,
     top: (r.top - cRect.top) / scale,
     bottom: (r.top - cRect.top) / scale + r.height / scale,
+    midY: (r.top - cRect.top) / scale + r.height / scale / 2,
   }
+}
+
+// Reads the canvas's CURRENTLY RENDERED scale directly off its own computed
+// transform, rather than trusting the `scale` prop — the canvas transform now
+// eases via a CSS transition (see OrgChart), so a synchronous read straight
+// after a scale change can catch it mid-transition, before the prop's target
+// value is actually what's painted. Deriving numerator (getBoundingClientRect)
+// and denominator (this) from the same live paint avoids a mismatch between
+// the two.
+function readScale(canvas) {
+  const t = getComputedStyle(canvas).transform
+  const m = t.match(/matrix\(([^,]+),/)
+  return m ? parseFloat(m[1]) : 1
 }
 
 // Every card's own outgoing team-pill line is a CSS `border-left` at
@@ -48,18 +64,71 @@ function box(el, cRect, scale) {
 // separate pill-line starting 80-some px to the left of it.
 const leftX = (box) => box.left + 11
 
-// A manager → children bus: drop from the manager, a horizontal rail 18px above
-// the highest child, then a vertical drop into each child (landing at each
-// child's leftX, per above). `spineLeft` starts the manager's own drop from
-// its leftX instead of its center, to continue a leader's spine-out pill line.
-function busPath(m, kids, opts = {}) {
-  const mx = opts.spineLeft ? leftX(m) : m.x
-  const railY = Math.min(...kids.map((k) => k.top)) - 18
-  let d = `M ${mx} ${m.bottom} V ${railY}`
-  const xs = kids.map(leftX).concat(mx)
-  d += ` M ${Math.min(...xs)} ${railY} H ${Math.max(...xs)}`
+// A manager → children bus, with a curved, side-on approach into each child
+// (drop beside the card, elbow right into its left edge at mid-height)
+// instead of a straight drop into its top — matching the CSS elbow spine's
+// own look (see TeamColumn.css), since these targets read as peers beside
+// the leader rather than a single head's direct line-of-cards. Used for both
+// the CEO bus and every group bus (Lainey's, Dave Hopp's sub-columns).
+//
+// Every corner here is rounded, including the two that a straight H/V path
+// would otherwise leave sharp: the leader's own turn into the rail, and each
+// kid's turn off the rail into its drop. The indent CSS (.oc-columns,
+// .oc-group-cols) is tuned so the leader's own x (mx) always exactly equals
+// the FIRST kid's gutter x — that kid's drop is then just a continuation of
+// the leader's own vertical line past the rail, not a separate branch, so it
+// skips the rail-branch curve the other kids get.
+function curvedBusPath(m, kids) {
+  const mx = leftX(m)
+  // 10px is the geometric floor: a non-aligned kid's own rail-branch curve
+  // (radius 7, landing at railY+7) needs to end before the kid's own top, so
+  // this must exceed 7. Kept as close to that floor as possible — anything
+  // bigger and this margin, plus the CSS margins that set the manager's
+  // distance from the rail (.oc-ceo-row, .oc-leader-wrap), stop lining up as
+  // one consistent gap everywhere.
+  const railY = Math.min(...kids.map((k) => k.top)) - 10
+  const gx = (k) => k.left - 10
+  const maxX = Math.max(...kids.map(gx), mx)
+  const r = 7 // corner radius, matching the existing card-entry curve
+  const aligned = kids.find((k) => Math.abs(gx(k) - mx) < 1)
+
+  // The manager's own drop either curves into the rail (no aligned kid to
+  // hand off to) or, when one kid's gx exactly matches mx, continues
+  // straight through as ONE path into that kid's own entry curve. Bending
+  // it into the rail regardless (as an earlier version did) drew two
+  // separate, slightly offset curves through the same corner — the rail's
+  // own turn ends at mx+r, but the aligned kid's line started fresh at mx —
+  // leaving a visible notch where they almost, but didn't quite, meet.
+  let d = aligned
+    ? `M ${mx} ${m.bottom} V ${aligned.midY - r} Q ${mx} ${aligned.midY} ${mx + r} ${aligned.midY} H ${aligned.left}`
+    : // The rightmost kid's own curve peels away starting r px before its gx
+      // (see the Q below) — if the rail were drawn all the way to maxX, that
+      // last stretch would sit past where the curve already diverges,
+      // leaving a short straight stub poking out on its own. Stopping the
+      // rail there instead lets it end exactly where that kid's curve picks
+      // up (unless maxX is mx itself, meaning there's only the one kid, with
+      // no curve to hand off to, and the rail needs to reach it exactly).
+      `M ${mx} ${m.bottom} V ${railY - r} Q ${mx} ${railY} ${mx + r} ${railY} H ${maxX === mx ? maxX : maxX - r}`
+
+  // The rail for any OTHER kids branches off the manager's straight line at
+  // railY — a plain T, no leading curve of its own, since the line above
+  // already passes through this exact point.
+  if (aligned && kids.length > 1) {
+    d += ` M ${mx} ${railY} H ${maxX === mx ? maxX : maxX - r}`
+  }
+
+  // Any OTHER kid sharing the same x as mx (e.g. the rest of a stacked
+  // `{ reports }` column, all left-aligned with each other and with the
+  // manager) is also a plain drop straight from the rail, no curve-off-rail
+  // hook — that hook is only needed when a kid's x genuinely differs from
+  // the rail's.
   kids.forEach((k) => {
-    d += ` M ${leftX(k)} ${railY} V ${k.top}`
+    if (k === aligned) return
+    const x = gx(k)
+    d +=
+      Math.abs(x - mx) < 1
+        ? ` M ${x} ${railY} V ${k.midY - r} Q ${x} ${k.midY} ${x + r} ${k.midY} H ${k.left}`
+        : ` M ${x - r} ${railY} Q ${x} ${railY} ${x} ${railY + r} V ${k.midY - r} Q ${x} ${k.midY} ${x + r} ${k.midY} H ${k.left}`
   })
   return d
 }
@@ -94,15 +163,27 @@ export default function ConnectorLayer({ canvasRef, anchorsRef, scale }) {
       if (need.some((id) => !anchors.get(id))) return
 
       const cRect = canvas.getBoundingClientRect()
-      const B = (id) => box(anchors.get(id), cRect, scale)
+      const liveScale = readScale(canvas)
+      const B = (id) => box(anchors.get(id), cRect, liveScale)
+      // A group leader's registered anchor is its whole block — card + team
+      // pill — so the leader's OWN outgoing spine can start below the pill
+      // (continuing its spine-out line). But that same anchor, when used as
+      // ANOTHER bus's target, needs just the card's own geometry: the block's
+      // extra height (from the pill) would otherwise skew midY well past the
+      // card's actual center. Plain cards (no pill wrapper) are unaffected.
+      const Bcard = (id) => {
+        const el = anchors.get(id)
+        return box(el.matches('.oc-card') ? el : el.querySelector('.oc-card'), cRect, liveScale)
+      }
       const ds = []
 
-      // 1. CEO → column heads. Drops from the card's left edge, not center.
-      ds.push(busPath(B(layout.ceo), ceoTargets.map(B), { spineLeft: true }))
+      // 1. CEO → column heads, with the same curved side-on approach as
+      // every other bus (see curvedBusPath above).
+      ds.push(curvedBusPath(B(layout.ceo), ceoTargets.map(Bcard)))
 
       // 2. Each group leader → its sub-column heads (and beside-column extras).
       groupBuses.forEach((g) => {
-        ds.push(busPath(B(g.leader), g.targets.map(B), { spineLeft: true }))
+        ds.push(curvedBusPath(B(g.leader), g.targets.map(Bcard)))
       })
 
       // Read from the CSS token here rather than at module scope: main.jsx
@@ -127,7 +208,7 @@ export default function ConnectorLayer({ canvasRef, anchorsRef, scale }) {
   return (
     <svg className="oc-canvas__lines" width={width} height={height} aria-hidden="true">
       {paths.map((d, i) => (
-        <path key={i} d={d} fill="none" stroke={lineColor} strokeWidth={2} strokeLinecap="round" />
+        <path key={i} d={d} fill="none" stroke={lineColor} strokeWidth={2} strokeLinecap="butt" />
       ))}
     </svg>
   )

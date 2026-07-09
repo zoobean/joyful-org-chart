@@ -25,9 +25,10 @@ const p = (id, name, title, reports = []) => ({ id, name, title, reports })
 // cross-column connector buses. Every person has a stable, unique id.
 export const org = p('felix-lloyd', 'Felix Lloyd', 'CEO', [
   p('kelly-hiser', 'Kelly Hiser', 'VP of Product', [
-    p('moni-barrette', 'Moni Barrette', 'Collection Development Team Lead'),
-    p('amber-mitchell', 'Amber Mitchell', 'Metadata Manager'),
-    p('rob-randle', 'Rob Randle', 'Content Manager'),
+    p('moni-barrette', 'Moni Barrette', 'Collection Development Team Lead', [
+      p('amber-mitchell', 'Amber Mitchell', 'Metadata Manager'),
+      p('rob-randle', 'Rob Randle', 'Content Manager'),
+    ]),
     p('mike-kuzin', 'Mike Kuzin', 'Principal Designer'),
     p('brooke-keene', 'Brooke Keene', 'Beanstack Product Manager'),
     p('elizabeth-ross', 'Elizabeth Ross', 'Product Support Team Manager', [
@@ -56,7 +57,6 @@ export const org = p('felix-lloyd', 'Felix Lloyd', 'CEO', [
   ]),
 
   p('ian-singer', 'Ian Singer', 'GM, Public Libraries & Academic', [
-    p('jeremy-vaux', 'Jeremy Vaux', 'Account Executive'),
     p('jillian-tweet', 'Jillian Tweet', 'Account Executive'),
     p('joe-barrette', 'Joe Barrette', 'Account Executive'),
     p('cleo-joyce', 'Cleo Joyce', 'Manager of PAL Success', [
@@ -67,25 +67,25 @@ export const org = p('felix-lloyd', 'Felix Lloyd', 'CEO', [
 
   p('dave-hopp', 'Dave Hopp', 'VP of Sales', [
     p('don-giacomini', 'Don Giacomini', 'Principal Account Executive'),
+    p('becca-traxler', 'Becca Traxler', 'Account Executive'),
+    p('beth-halaz', 'Beth Halaz', 'Account Executive'),
+    p('bryana-snyder', 'Bryana Snyder', 'Account Executive'),
+    p('chelsea-mccoy', 'Chelsea McCoy', 'Account Executive'),
+    p('jessica-fulton', 'Jessica Fulton', 'Account Executive'),
+    p('tbd-account-executive', 'TBD', 'Account Executive'),
+    p('amanda-taylor', 'Amanda Taylor', 'Associate Account Executive'),
     p('lauren-brami', 'Lauren Brami', 'Business Development Team Lead', [
-      p('becca-traxler', 'Becca Traxler', 'Account Executive'),
       p('andrea-mullon', 'Andrea Mullon', 'Business Development Rep'),
-      p('beth-halaz', 'Beth Halaz', 'Account Executive'),
       p('steven-dimiceli', 'Steven DiMiceli', 'Business Development Rep'),
-      p('bryana-snyder', 'Bryana Snyder', 'Account Executive'),
       p('francheska-savage', 'Francheska Savage', 'Business Development Rep'),
-      p('chelsea-mccoy', 'Chelsea McCoy', 'Account Executive'),
       p('ciera-baker', 'Ciera Baker', 'Assoc. Business Development Rep'),
-      p('jessica-fulton', 'Jessica Fulton', 'Account Executive'),
     ]),
     p('michael-kideckel', 'Michael Kideckel', 'Business Development Team Lead', [
-      p('tbd-account-executive', 'TBD', 'Account Executive'),
       p('esmy-clavel', 'Esmy Clavel', 'Business Development Rep'),
-      p('amanda-taylor', 'Amanda Taylor', 'Associate Account Executive'),
       p('akua-peprah', 'Akua Peprah', 'Assoc. Business Development Rep'),
       p('amanda-garner', 'Amanda Garner', 'Assoc. Business Development Rep'),
-      p('haven-gotham', 'Haven Gotham', 'Business Development Rep'),
     ]),
+    p('haven-gotham', 'Haven Gotham', 'Business Development Rep'),
   ]),
 
   p('shaun-conway', 'Shaun Conway', 'VP of Client Success', [
@@ -96,10 +96,10 @@ export const org = p('felix-lloyd', 'Felix Lloyd', 'CEO', [
     p('tammy-mcintyre', 'Tammy McIntyre', 'School Success Team Lead', [
       p('vickie-blankenship', 'Vickie Blankenship', 'School Success Manager'),
       p('alexandra-tolbert', 'Alexandra Tolbert', 'School Success Manager'),
-      p('emily-peterson', 'Emily Peterson', 'School Success Manager'),
-      p('kelly-williams', 'Kelly Williams', 'School Success Manager'),
-      p('stella-bromley', 'Stella Bromley', 'School Success Manager'),
     ]),
+    p('emily-peterson', 'Emily Peterson', 'School Success Manager'),
+    p('kelly-williams', 'Kelly Williams', 'School Success Manager'),
+    p('stella-bromley', 'Stella Bromley', 'School Success Manager'),
   ]),
 
   p('tyler-ewing', 'Tyler Ewing', 'CTO', [
@@ -126,8 +126,6 @@ export const teams = [
   { id: 'business-operations', name: 'Business operations', head: 'akshat-khandelwal' },
   { id: 'pal', name: 'PAL', head: 'ian-singer' },
   { id: 'school-sales', name: 'School sales', head: 'dave-hopp' },
-  { id: 'school-sales-lauren', name: "Lauren's team", head: 'lauren-brami' },
-  { id: 'school-sales-michael', name: "Michael's team", head: 'michael-kideckel' },
   { id: 'school-client-success', name: 'School client success', head: 'shaun-conway' },
   { id: 'engineering', name: 'Engineering', head: 'tyler-ewing' },
 ]
@@ -135,15 +133,21 @@ export const teams = [
 // ── 3. Layout ────────────────────────────────────────────────────────────────
 // The visual column arrangement, LEFT → RIGHT. A column renders a team head and
 // that head's reports. Placement is separate from reporting:
-//   • `group`      — a leader card (Lainey) spanning a row of sub-columns.
+//   • `group`      — a leader card (Lainey) spanning a row of sub-columns. A
+//                    sub-column is either `{ team }` (a team head + its own
+//                    pill/reports, e.g. Marketing) or `{ reports }` (a plain
+//                    chunk of the group leader's own direct reports, rendered
+//                    as an elbow-spine list with no head/pill of its own —
+//                    e.g. Dave Hopp's reports split across two columns).
 //   • `extras`     — ids of cards rendered as their own column immediately to
-//                    the right of this one, for layout reasons, whose
-//                    reporting line points elsewhere (Lindsey → reports to Lainey).
+//                    the right of a `{ team }` sub-column, for layout reasons,
+//                    whose reporting line points elsewhere (Lindsey → reports
+//                    to Lainey).
 //   • `slim`       — the narrower column width used inside the group.
-//   • `showLabel`  — set false to keep a column's head→reports spine (and its
-//                    line-drawing pill-row) without the visible name badge —
-//                    for sub-columns already named by their head's own card
-//                    (Lauren's/Michael's team, under Dave Hopp).
+//   • `showLabel`  — set false to keep a `{ team }` column's head→reports
+//                    spine (and its line-drawing pill-row) without the visible
+//                    name badge — for sub-columns already named by their
+//                    head's own card.
 export const layout = {
   ceo: 'felix-lloyd',
   columns: [
@@ -164,8 +168,20 @@ export const layout = {
         leader: 'dave-hopp',
         leaderTeam: 'school-sales',
         columns: [
-          { team: 'school-sales-lauren', slim: true, showLabel: false },
-          { team: 'school-sales-michael', slim: true, showLabel: false, extras: ['don-giacomini'] },
+          {
+            reports: [
+              'don-giacomini',
+              'becca-traxler',
+              'beth-halaz',
+              'bryana-snyder',
+              'chelsea-mccoy',
+              'jessica-fulton',
+              'tbd-account-executive',
+              'amanda-taylor',
+            ],
+            slim: true,
+          },
+          { reports: ['lauren-brami', 'michael-kideckel', 'haven-gotham'], slim: true },
         ],
       },
     },
