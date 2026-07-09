@@ -72,7 +72,6 @@ export const org = p('felix-lloyd', 'Felix Lloyd', 'CEO', [
     p('bryana-snyder', 'Bryana Snyder', 'Account Executive'),
     p('chelsea-mccoy', 'Chelsea McCoy', 'Account Executive'),
     p('jessica-fulton', 'Jessica Fulton', 'Account Executive'),
-    p('tbd-account-executive', 'TBD', 'Account Executive'),
     p('amanda-taylor', 'Amanda Taylor', 'Associate Account Executive'),
     p('lauren-brami', 'Lauren Brami', 'Business Development Team Lead', [
       p('andrea-mullon', 'Andrea Mullon', 'Business Development Rep'),
@@ -112,7 +111,6 @@ export const org = p('felix-lloyd', 'Felix Lloyd', 'CEO', [
     p('josh-joson', 'Josh Joson', 'Engineer'),
     p('armando-duran', 'Armando Duran', 'Senior React Native Developer'),
     p('rachel-mcgrane', 'Rachel McGrane', 'Front End Design Engineer'),
-    p('tbd-senior-developer', 'TBD', 'Senior Developer'),
   ]),
 ])
 
@@ -176,7 +174,6 @@ export const layout = {
               'bryana-snyder',
               'chelsea-mccoy',
               'jessica-fulton',
-              'tbd-account-executive',
               'amanda-taylor',
             ],
             slim: true,
