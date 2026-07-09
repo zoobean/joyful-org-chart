@@ -1,0 +1,45 @@
+.oc-col {
+  width: 208px;
+  flex: none;
+}
+
+.oc-col--slim {
+  width: 200px;
+}
+
+.oc-node {
+  margin-bottom: 8px;
+}
+
+.oc-children {
+  margin-left: 10px;
+  padding-left: 16px;
+  margin-top: 8px;
+}
+
+.oc-children > .oc-node {
+  position: relative;
+}
+
+/* Elbow stub: spine turns right into each report card. */
+.oc-children > .oc-node::before {
+  content: "";
+  position: absolute;
+  left: -16px;
+  top: -8px;
+  width: 13px;
+  height: 28px;
+  border-left: var(--oc-line-weight) solid var(--oc-line);
+  border-bottom: var(--oc-line-weight) solid var(--oc-line);
+  border-bottom-left-radius: var(--oc-elbow-radius);
+}
+
+/* Continue the spine down to the next sibling report. */
+.oc-children > .oc-node:not(:last-child)::after {
+  content: "";
+  position: absolute;
+  left: -16px;
+  top: -8px;
+  bottom: -8px;
+  border-left: var(--oc-line-weight) solid var(--oc-line);
+}

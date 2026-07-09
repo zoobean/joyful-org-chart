@@ -1,0 +1,86 @@
+.oc-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.oc-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px;
+  border: none;
+  background: none;
+  font: inherit;
+  cursor: pointer;
+  border-radius: 6px;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.oc-toggle:focus-visible {
+  outline: 2px solid var(--oc-green);
+  outline-offset: 2px;
+}
+
+.oc-toggle__track {
+  position: relative;
+  width: 34px;
+  height: 20px;
+  flex: none;
+  border-radius: 999px;
+  background: #d6d6cf;
+  transition: background 0.15s ease;
+}
+
+.oc-toggle.is-on .oc-toggle__track {
+  background: var(--oc-green);
+}
+
+.oc-toggle__thumb {
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.25);
+  transition: transform 0.15s ease;
+}
+
+.oc-toggle.is-on .oc-toggle__thumb {
+  transform: translateX(14px);
+}
+
+.oc-toggle__text {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--oc-text-muted);
+}
+
+.oc-print-btn {
+  font: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--oc-green);
+  background: none;
+  border: 1px solid var(--oc-green);
+  border-radius: 6px;
+  padding: 9px 18px;
+  cursor: pointer;
+}
+
+.oc-print-btn:hover:not(:disabled) {
+  background: var(--oc-green);
+  color: #fff;
+}
+
+.oc-print-btn:focus-visible {
+  outline: 2px solid var(--oc-green);
+  outline-offset: 2px;
+}
+
+.oc-print-btn:disabled {
+  opacity: 0.6;
+  cursor: default;
+}

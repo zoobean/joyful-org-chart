@@ -1,0 +1,23 @@
+{
+  "name": "bs-orgchart",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "packageManager": "pnpm@11.1.2",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "html-to-image": "^1.11.13",
+    "jspdf": "^4.2.1",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "svg2pdf.js": "^2.7.0"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-react": "^4.3.4",
+    "vite": "^5.4.11"
+  }
+}

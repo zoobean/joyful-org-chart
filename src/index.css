@@ -1,0 +1,71 @@
+:root {
+  /* Connector / line system */
+  --oc-line: #c9ecf3;
+  --oc-line-weight: 2px;
+  --oc-elbow-radius: 7px;
+
+  /* Cards */
+  --oc-card-border: #dcdcd6;
+  --oc-card-bg: #fff;
+
+  /* Brand */
+  --oc-green: #0a5c4a;
+
+  /* Team pill */
+  --oc-pill-bg: #c9ecf3;
+  --oc-pill-fg: #066b7a;
+
+  /* Surface */
+  --oc-bg: #fafaf8;
+  --oc-text: #222;
+  --oc-text-muted: #666;
+  --oc-chrome-border: #e7e7e0;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Nunito Sans', Arial, Helvetica, sans-serif;
+  background: var(--oc-bg);
+  margin: 0;
+  padding: 0;
+  color: var(--oc-text);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+/* Printing / "Save as PDF": the on-screen app is a fixed-height viewport with
+   a pannable, zoomable canvas, but the printed page needs the FULL chart at
+   its natural size regardless of the current pan/zoom — so this resets the
+   canvas transform and lets every ancestor grow to its content's real size
+   instead of clipping to one screen's worth. `!important` is required only on
+   the transform, since that's set inline (style=) by the pan/zoom code and a
+   stylesheet rule can't otherwise outrank an inline style. */
+@media print {
+  .oc-toolbar,
+  .oc-zoom-controls {
+    display: none;
+  }
+
+  .oc-app {
+    height: auto;
+  }
+
+  .oc-viewport {
+    overflow: visible;
+    width: auto;
+    height: auto;
+  }
+
+  .oc-canvas {
+    position: relative !important;
+    transform: none !important;
+  }
+
+  @page {
+    size: landscape;
+    margin: 12mm;
+  }
+}

@@ -1,0 +1,34 @@
+.oc-pill-row {
+  position: relative;
+  margin: 8px 0;
+  padding-left: 12px; /* pill's flat edge sits flush against the spine line */
+  display: flex;
+  justify-content: flex-start;
+}
+
+.oc-pill {
+  background: var(--oc-pill-bg);
+  color: var(--oc-pill-fg);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  padding: 3px 12px 3px 9px;
+  border-radius: 0 999px 999px 0;
+}
+
+/* Straight vertical spine to the LEFT of the pill. It runs flat past the pill —
+   from the head card down to the reports — with no elbow turning into the pill. */
+.oc-pill-row::before {
+  content: "";
+  position: absolute;
+  left: 10px;
+  top: -8px;
+  bottom: -10px;
+  border-left: var(--oc-line-weight) solid var(--oc-line);
+}
+
+/* Leader variant: spine runs out the bottom of the block to the bus below. */
+.oc-pill-row--spine-out::before {
+  bottom: -12px;
+}

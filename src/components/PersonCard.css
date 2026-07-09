@@ -1,0 +1,24 @@
+.oc-card {
+  border: var(--oc-line-weight) solid var(--oc-card-border);
+  background: var(--oc-card-bg);
+  border-radius: 6px;
+  padding: 7px 9px;
+  font-size: 12px;
+}
+
+.oc-card--open {
+  border-style: dotted;
+  background: transparent;
+}
+
+.oc-card__name {
+  font-weight: 700;
+  font-size: 13px;
+  color: var(--oc-green);
+}
+
+.oc-card__title {
+  color: var(--oc-text-muted);
+  font-size: 11px;
+  margin-top: 1px;
+}

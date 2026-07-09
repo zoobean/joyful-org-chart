@@ -1,0 +1,14 @@
+.oc-canvas__lines {
+  position: absolute;
+  top: 0;
+  left: 0;
+  pointer-events: none;
+}
+
+/* Same line tokens as the CSS elbow spines, so both layers read as one system. */
+.oc-canvas__lines path {
+  fill: none;
+  stroke: var(--oc-line);
+  stroke-width: var(--oc-line-weight);
+  stroke-linecap: round;
+}

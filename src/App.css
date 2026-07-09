@@ -1,0 +1,21 @@
+.oc-app {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.oc-header {
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  padding: 20px 32px;
+  background: var(--oc-bg);
+  border-bottom: 1px solid var(--oc-chrome-border);
+}
+
+.oc-main {
+  flex: 1;
+  min-height: 0;
+}
