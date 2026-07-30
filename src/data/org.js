@@ -73,6 +73,7 @@ export const org = p('felix-lloyd', 'Felix Lloyd', 'CEO', [
     p('chelsea-mccoy', 'Chelsea McCoy', 'Account Executive'),
     p('jessica-fulton', 'Jessica Fulton', 'Account Executive'),
     p('amanda-taylor', 'Amanda Taylor', 'Associate Account Executive'),
+    p('coley-martin', 'Coley Martin', 'Regional Sales Manager'),
     p('lauren-brami', 'Lauren Brami', 'Business Development Team Lead', [
       p('andrea-mullon', 'Andrea Mullon', 'Business Development Rep'),
       p('steven-dimiceli', 'Steven DiMiceli', 'Business Development Rep'),
@@ -85,7 +86,6 @@ export const org = p('felix-lloyd', 'Felix Lloyd', 'CEO', [
       p('amanda-garner', 'Amanda Garner', 'Assoc. Business Development Rep'),
     ]),
     p('haven-gotham', 'Haven Gotham', 'Business Development Rep'),
-    p('coley-martin', 'Coley Martin', 'Regional Sales Manager'),
   ]),
 
   p('shaun-conway', 'Shaun Conway', 'VP of Client Success', [
@@ -176,13 +176,11 @@ export const layout = {
               'chelsea-mccoy',
               'jessica-fulton',
               'amanda-taylor',
+              'coley-martin',
             ],
             slim: true,
           },
-          {
-            reports: ['lauren-brami', 'michael-kideckel', 'haven-gotham', 'coley-martin'],
-            slim: true,
-          },
+          { reports: ['lauren-brami', 'michael-kideckel', 'haven-gotham'], slim: true },
         ],
       },
     },
