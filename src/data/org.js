@@ -109,7 +109,7 @@ export const org = p('felix-lloyd', 'Felix Lloyd', 'CEO', [
     p('antonio-chavez', 'Antonio Chavez', 'Staff Engineer'),
     p('vincent-mendiola', 'Vincent Mendiola', 'Senior Developer'),
     p('alejandro-zaizar', 'Alejandro Zaizar', 'Engineer'),
-    p('josh-joson', 'Josh Joson', 'Engineer'),
+    p('josh-joson', 'Josh Joson', 'Senior React Native Engineer'),
     p('armando-duran', 'Armando Duran', 'Senior React Native Developer'),
     p('rachel-mcgrane', 'Rachel McGrane', 'Front End Design Engineer'),
   ]),
