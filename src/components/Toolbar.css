@@ -17,30 +17,30 @@
   font-size: 13px;
   font-weight: 600;
   color: #fff;
-  background: var(--oc-green);
-  border: 1px solid var(--oc-green);
+  background: var(--oc-teal);
+  border: 1px solid var(--oc-teal);
   border-radius: 6px;
   cursor: pointer;
-  box-shadow: 0 1px 2px rgba(10, 92, 74, 0.18);
+  box-shadow: 0 1px 2px rgba(4, 114, 130, 0.18);
   transition: background-color 120ms ease, border-color 120ms ease, box-shadow 120ms ease,
     transform 120ms ease;
 }
 
 .oc-print-btn:hover:not(:disabled) {
-  background: var(--oc-green-dark);
-  border-color: var(--oc-green-dark);
-  box-shadow: 0 2px 6px rgba(10, 92, 74, 0.24);
+  background: var(--oc-teal-dark);
+  border-color: var(--oc-teal-dark);
+  box-shadow: 0 2px 6px rgba(4, 114, 130, 0.24);
 }
 
 /* Pressing it moves the button rather than only shading it, so the click
    registers even when the cursor hides the color change. */
 .oc-print-btn:active:not(:disabled) {
   transform: translateY(1px);
-  box-shadow: 0 1px 1px rgba(10, 92, 74, 0.2);
+  box-shadow: 0 1px 1px rgba(4, 114, 130, 0.2);
 }
 
 .oc-print-btn:focus-visible {
-  outline: 2px solid var(--oc-green);
+  outline: 2px solid var(--oc-teal);
   outline-offset: 2px;
 }
 

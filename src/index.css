@@ -9,8 +9,11 @@
   --oc-card-bg: #fff;
 
   /* Brand */
+  /* The teal is the logo's own color (see Logo.jsx) — the brand accent for
+     buttons and focus rings. The green stays as the card-name color. */
+  --oc-teal: #047282;
+  --oc-teal-dark: #035b68;
   --oc-green: #0a5c4a;
-  --oc-green-dark: #07443a;
 
   /* Team pill */
   --oc-pill-bg: #c9ecf3;
