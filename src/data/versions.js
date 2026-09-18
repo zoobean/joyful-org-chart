@@ -134,6 +134,10 @@ export const versions = [
       // Cleo keeps her title and both Library Success Managers, under Shaun.
       move(d, 'cleo-joyce', 'shaun-conway')
 
+      // Product Support moves from Kelly Hiser to Shaun. Moving Elizabeth
+      // carries Camille, Jenny and Simon with her — they are her subtree.
+      move(d, 'elizabeth-ross', 'shaun-conway')
+
       // Don and Bryana step up to Coley's level; Haven joins the other two
       // business development team leads.
       matchTitle(d, 'coley-martin', ['don-giacomini', 'bryana-snyder'])
