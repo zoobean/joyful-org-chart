@@ -27,7 +27,17 @@ const EXPORT_MARGIN = 40
 const EXPORT_LOGO_GAP = 24
 const EXPORT_LOGO_HEIGHT = 32
 const EXPORT_PAGE_BG = [250, 250, 248] // --oc-bg, as addImage/rect want it: r, g, b
-const LINE_RGB = [201, 236, 243] // --oc-line (#c9ecf3), for the native-drawn connector lines
+const LINE_RGB = [201, 236, 243] // --oc-line (#c9ecf3), the fallback for native-drawn connectors
+
+// Connector strokes are per-department now (see ConnectorLayer), so each path
+// carries its own color. Parses the value straight off the attribute rather
+// than via getComputedStyle, which is read while the layer is display:none.
+function parseStroke(value) {
+  const hex = value?.match(/^#([0-9a-f]{6})$/i)
+  if (hex) return [0, 2, 4].map((i) => parseInt(hex[1].slice(i, i + 2), 16))
+  const rgb = value?.match(/(\d+)\D+(\d+)\D+(\d+)/)
+  return rgb ? [Number(rgb[1]), Number(rgb[2]), Number(rgb[3])] : LINE_RGB
+}
 
 // A card placed beside a column for layout reasons whose reporting line
 // points elsewhere (e.g. Lindsey, beside Business operations) — a bare card
@@ -299,7 +309,10 @@ const OrgChart = forwardRef(function OrgChart(_props, ref) {
 
     const prevLinesDisplay = linesEl.style.display
     linesEl.style.display = 'none' // exclude from the raster; drawn as vector below instead
-    const pathDs = [...linesEl.querySelectorAll('path')].map((p) => p.getAttribute('d'))
+    const connectors = [...linesEl.querySelectorAll('path')].map((p) => ({
+      d: p.getAttribute('d'),
+      rgb: parseStroke(p.getAttribute('stroke')),
+    }))
 
     try {
       const contentDataUrl = await toPng(canvas, {
@@ -334,10 +347,12 @@ const OrgChart = forwardRef(function OrgChart(_props, ref) {
       // worth the extra CPU time for a one-off export.
       pdf.addImage(contentDataUrl, 'PNG', EXPORT_MARGIN, contentY, contentW, contentH, undefined, 'SLOW')
 
-      pdf.setDrawColor(...LINE_RGB)
       pdf.setLineWidth(2)
       pdf.setLineCap('round')
-      pathDs.forEach((d) => drawConnectorPathD(pdf, d, EXPORT_MARGIN, contentY))
+      connectors.forEach(({ d, rgb }) => {
+        pdf.setDrawColor(...rgb)
+        drawConnectorPathD(pdf, d, EXPORT_MARGIN, contentY)
+      })
 
       await pdf.svg(logoEl, { x: EXPORT_MARGIN, y: EXPORT_MARGIN, width: logoW, height: EXPORT_LOGO_HEIGHT })
 

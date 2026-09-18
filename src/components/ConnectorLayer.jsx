@@ -86,7 +86,7 @@ const leftX = (box) => box.left + 11
 // the FIRST kid's gutter x — that kid's drop is then just a continuation of
 // the leader's own vertical line past the rail, not a separate branch, so it
 // skips the rail-branch curve the other kids get.
-function curvedBusPath(m, kids) {
+function curvedBusPath(m, kids, managerColor) {
   const mx = leftX(m)
   // 10px is the geometric floor: a non-aligned kid's own rail-branch curve
   // (radius 7, landing at railY+7) needs to end before the kid's own top, so
@@ -99,46 +99,51 @@ function curvedBusPath(m, kids) {
   const maxX = Math.max(...kids.map(gx), mx)
   const r = 7 // corner radius, matching the existing card-entry curve
   const aligned = kids.find((k) => Math.abs(gx(k) - mx) < 1)
+  // The rightmost kid's own curve peels away starting r px before its gx (see
+  // below) — if the rail ran all the way to maxX, that last stretch would sit
+  // past where the curve already diverges, leaving a short straight stub
+  // poking out on its own. Stop it where that kid's curve picks up, unless
+  // maxX is mx itself (only one kid, no curve to hand off to).
+  const railEnd = maxX === mx ? maxX : maxX - r
 
-  // The manager's own drop either curves into the rail (no aligned kid to
-  // hand off to) or, when one kid's gx exactly matches mx, continues
-  // straight through as ONE path into that kid's own entry curve. Bending
-  // it into the rail regardless (as an earlier version did) drew two
-  // separate, slightly offset curves through the same corner — the rail's
-  // own turn ends at mx+r, but the aligned kid's line started fresh at mx —
-  // leaving a visible notch where they almost, but didn't quite, meet.
-  let d = aligned
-    ? `M ${mx} ${m.bottom} V ${aligned.midY - r} Q ${mx} ${aligned.midY} ${mx + r} ${aligned.midY} H ${aligned.left}`
-    : // The rightmost kid's own curve peels away starting r px before its gx
-      // (see the Q below) — if the rail were drawn all the way to maxX, that
-      // last stretch would sit past where the curve already diverges,
-      // leaving a short straight stub poking out on its own. Stopping the
-      // rail there instead lets it end exactly where that kid's curve picks
-      // up (unless maxX is mx itself, meaning there's only the one kid, with
-      // no curve to hand off to, and the rail needs to reach it exactly).
-      `M ${mx} ${m.bottom} V ${railY - r} Q ${mx} ${railY} ${mx + r} ${railY} H ${maxX === mx ? maxX : maxX - r}`
+  // Each kid's approach is drawn in ITS OWN department's color, so a line
+  // arriving at a card matches that card. The manager's stem and the rail take
+  // the manager's color — for the CEO bus, which fans out across every
+  // department, that's the neutral root line.
+  const segments = []
 
-  // The rail for any OTHER kids branches off the manager's straight line at
-  // railY — a plain T, no leading curve of its own, since the line above
-  // already passes through this exact point.
-  if (aligned && kids.length > 1) {
-    d += ` M ${mx} ${railY} H ${maxX === mx ? maxX : maxX - r}`
+  if (aligned) {
+    // When one kid's gutter x exactly matches mx, the manager's stem and that
+    // kid's drop are collinear: originally one path, split here only so the
+    // two can carry different colors. A straight vertical join is seamless —
+    // unlike the curve-to-curve join the merge was there to avoid.
+    segments.push({ d: `M ${mx} ${m.bottom} V ${railY}`, color: managerColor })
+    // The rail for any OTHER kids branches off that straight line at railY —
+    // a plain T, no leading curve, since the stem already passes through here.
+    if (kids.length > 1) {
+      segments.push({ d: `M ${mx} ${railY} H ${railEnd}`, color: managerColor })
+    }
+  } else {
+    // No kid to hand off to, so the stem curves into the rail itself.
+    segments.push({
+      d: `M ${mx} ${m.bottom} V ${railY - r} Q ${mx} ${railY} ${mx + r} ${railY} H ${railEnd}`,
+      color: managerColor,
+    })
   }
 
-  // Any OTHER kid sharing the same x as mx (e.g. the rest of a stacked
-  // `{ reports }` column, all left-aligned with each other and with the
-  // manager) is also a plain drop straight from the rail, no curve-off-rail
-  // hook — that hook is only needed when a kid's x genuinely differs from
-  // the rail's.
   kids.forEach((k) => {
-    if (k === aligned) return
     const x = gx(k)
-    d +=
+    // A kid sharing the manager's x (the aligned one, or the rest of a stacked
+    // `{ reports }` column) drops straight from the rail with no curve-off-rail
+    // hook — that hook is only needed when a kid's x genuinely differs.
+    const d =
       Math.abs(x - mx) < 1
-        ? ` M ${x} ${railY} V ${k.midY - r} Q ${x} ${k.midY} ${x + r} ${k.midY} H ${k.left}`
-        : ` M ${x - r} ${railY} Q ${x} ${railY} ${x} ${railY + r} V ${k.midY - r} Q ${x} ${k.midY} ${x + r} ${k.midY} H ${k.left}`
+        ? `M ${mx} ${railY} V ${k.midY - r} Q ${mx} ${k.midY} ${mx + r} ${k.midY} H ${k.left}`
+        : `M ${x - r} ${railY} Q ${x} ${railY} ${x} ${railY + r} V ${k.midY - r} Q ${x} ${k.midY} ${x + r} ${k.midY} H ${k.left}`
+    segments.push({ d, color: k.color })
   })
-  return d
+
+  return segments
 }
 
 // SVG overlay that draws the cross-column buses. Measures registered anchor
@@ -154,12 +159,7 @@ function curvedBusPath(m, kids) {
 export default function ConnectorLayer({ canvasRef, anchorsRef, scale }) {
   const { layout, getTeam } = useOrgData()
   const { ceoTargets, groupBuses } = useMemo(() => busTopology(layout, getTeam), [layout, getTeam])
-  const [{ width, height, paths, lineColor }, setState] = useState({
-    width: 0,
-    height: 0,
-    paths: [],
-    lineColor: '',
-  })
+  const [{ width, height, paths }, setState] = useState({ width: 0, height: 0, paths: [] })
 
   useLayoutEffect(() => {
     const canvas = canvasRef.current
@@ -173,6 +173,24 @@ export default function ConnectorLayer({ canvasRef, anchorsRef, scale }) {
 
       const cRect = canvas.getBoundingClientRect()
       const liveScale = readScale(canvas)
+
+      // Read from the CSS token here rather than at module scope: main.jsx
+      // imports App (and this module, transitively) before index.css, so a
+      // module-level read would run before the stylesheet is injected and
+      // always come back empty in dev. This effect runs post-mount, after
+      // every module's top-level code (including index.css's) has run.
+      const rootLine = getComputedStyle(document.documentElement).getPropertyValue('--oc-line').trim()
+
+      // A card's department color, taken from the same cascade that colors the
+      // card itself: the nearest [data-team] ancestor (a team column, or the
+      // group a plain report column sits in). The CEO has no department, so he
+      // falls back to the neutral line.
+      const teamColor = (id) => {
+        const scope = anchors.get(id)?.closest('[data-team]')
+        const value = scope && getComputedStyle(scope).getPropertyValue('--oc-team-bg').trim()
+        return value || rootLine
+      }
+
       const B = (id) => box(anchors.get(id), cRect, liveScale)
       // A group leader's registered anchor is its whole block — card + team
       // pill — so the leader's OWN outgoing spine can start below the pill
@@ -182,26 +200,23 @@ export default function ConnectorLayer({ canvasRef, anchorsRef, scale }) {
       // card's actual center. Plain cards (no pill wrapper) are unaffected.
       const Bcard = (id) => {
         const el = anchors.get(id)
-        return box(el.matches('.oc-card') ? el : el.querySelector('.oc-card'), cRect, liveScale)
+        return {
+          ...box(el.matches('.oc-card') ? el : el.querySelector('.oc-card'), cRect, liveScale),
+          color: teamColor(id),
+        }
       }
       const ds = []
 
       // 1. CEO → column heads, with the same curved side-on approach as
       // every other bus (see curvedBusPath above).
-      ds.push(curvedBusPath(B(layout.ceo), ceoTargets.map(Bcard)))
+      ds.push(...curvedBusPath(B(layout.ceo), ceoTargets.map(Bcard), teamColor(layout.ceo)))
 
       // 2. Each group leader → its sub-column heads (and beside-column extras).
       groupBuses.forEach((g) => {
-        ds.push(curvedBusPath(B(g.leader), g.targets.map(Bcard)))
+        ds.push(...curvedBusPath(B(g.leader), g.targets.map(Bcard), teamColor(g.leader)))
       })
 
-      // Read from the CSS token here rather than at module scope: main.jsx
-      // imports App (and this module, transitively) before index.css, so a
-      // module-level read would run before the stylesheet is injected and
-      // always come back empty in dev. This effect runs post-mount, after
-      // every module's top-level code (including index.css's) has run.
-      const lineColor = getComputedStyle(document.documentElement).getPropertyValue('--oc-line').trim()
-      setState({ width: canvas.scrollWidth, height: canvas.scrollHeight, paths: ds, lineColor })
+      setState({ width: canvas.scrollWidth, height: canvas.scrollHeight, paths: ds })
     }
 
     recompute()
@@ -216,8 +231,8 @@ export default function ConnectorLayer({ canvasRef, anchorsRef, scale }) {
 
   return (
     <svg className="oc-canvas__lines" width={width} height={height} aria-hidden="true">
-      {paths.map((d, i) => (
-        <path key={i} d={d} fill="none" stroke={lineColor} strokeWidth={2} strokeLinecap="butt" />
+      {paths.map((p, i) => (
+        <path key={i} d={p.d} fill="none" stroke={p.color} strokeWidth={2} strokeLinecap="butt" />
       ))}
     </svg>
   )

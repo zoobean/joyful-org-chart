@@ -5,8 +5,7 @@
   --oc-elbow-radius: 7px;
 
   /* Cards */
-  --oc-card-border-base: #dcdcd6;
-  --oc-card-border: var(--oc-card-border-base);
+  --oc-card-border: #dcdcd6;
   --oc-card-bg: #fff;
 
   /* Brand */
@@ -82,10 +81,12 @@
   --oc-team-fg: #414c8c;
 }
 
-/* Shared derivations, so each department above only states its two colors. */
+/* Shared derivations, so each department above only states its two colors.
+   Spines and card borders are the SAME value as the pill background, so a
+   department's lines and boxes read as one color rather than three shades. */
 [data-team] {
   --oc-line: var(--oc-team-bg);
-  --oc-card-border: color-mix(in srgb, var(--oc-team-fg) 20%, var(--oc-card-border-base));
+  --oc-card-border: var(--oc-team-bg);
 }
 
 * {
