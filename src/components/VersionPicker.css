@@ -1,28 +1,33 @@
-.oc-version {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
+/* Sized to match the Save as PDF button (same height, radius, and type) so the
+   two read as one control group — the picker in neutral chrome, since it's a
+   view switch rather than an action and shouldn't compete with the button.
 
-.oc-version__label {
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--oc-text-muted);
-}
-
-/* Matches the Save as PDF button's shape and weight so the two read as one
-   control group, but in neutral chrome — the picker is a view switch, not an
-   action, so it shouldn't compete with the button's green. */
+   `appearance: none` plus a drawn chevron rather than the native one: the
+   native control paints its arrow hard against the right edge with no way to
+   inset it, which left the chevron crowding the border. */
 .oc-version__select {
+  appearance: none;
+  -webkit-appearance: none;
   font: inherit;
   font-size: 13px;
   font-weight: 600;
   color: var(--oc-text);
-  background: var(--oc-card-bg);
+  background-color: var(--oc-card-bg);
+  background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8' fill='none'%3E%3Cpath d='M1 1.75 6 6.25l5-4.5' stroke='%23666666' stroke-width='1.75' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 14px center;
+  background-size: 12px 8px;
   border: 1px solid var(--oc-chrome-border);
   border-radius: 6px;
-  padding: 8px 12px;
+  height: 38px;
+  /* Right padding clears the chevron (14px inset + 12px glyph + 10px gap). */
+  padding: 0 36px 0 14px;
   cursor: pointer;
+  transition: border-color 120ms ease;
+}
+
+.oc-version__select:hover {
+  border-color: #d5d5cb;
 }
 
 .oc-version__select:focus-visible {
