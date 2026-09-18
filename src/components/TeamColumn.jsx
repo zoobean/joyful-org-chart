@@ -1,6 +1,6 @@
 import PersonCard from './PersonCard.jsx'
 import TeamPill from './TeamPill.jsx'
-import { getPerson } from '../data/selectors.js'
+import { useOrgData } from '../data/orgContext.js'
 import './TeamColumn.css'
 
 // A report and its descendants. The CSS elbow spine (see TeamColumn.css) is
@@ -29,6 +29,7 @@ export function ReportNode({ person, register }) {
 // A single column: a team head, its pill, and the head's reports. The head is
 // a connector anchor, so it registers its card element via `register(id)`.
 export default function TeamColumn({ team, slim = false, showLabel = true, register = () => () => {} }) {
+  const { getPerson } = useOrgData()
   const head = getPerson(team.head)
   return (
     <div className={slim ? 'oc-col oc-col--slim' : 'oc-col'}>

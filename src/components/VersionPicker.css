@@ -1,0 +1,31 @@
+.oc-version {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.oc-version__label {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--oc-text-muted);
+}
+
+/* Matches the Save as PDF button's shape and weight so the two read as one
+   control group, but in neutral chrome — the picker is a view switch, not an
+   action, so it shouldn't compete with the button's green. */
+.oc-version__select {
+  font: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--oc-text);
+  background: var(--oc-card-bg);
+  border: 1px solid var(--oc-chrome-border);
+  border-radius: 6px;
+  padding: 8px 12px;
+  cursor: pointer;
+}
+
+.oc-version__select:focus-visible {
+  outline: 2px solid var(--oc-green);
+  outline-offset: 2px;
+}

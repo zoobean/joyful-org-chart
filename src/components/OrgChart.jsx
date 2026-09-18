@@ -15,8 +15,7 @@ import PersonCard from './PersonCard.jsx'
 import TeamPill from './TeamPill.jsx'
 import TeamColumn, { ReportNode } from './TeamColumn.jsx'
 import ConnectorLayer from './ConnectorLayer.jsx'
-import { layout } from '../data/org.js'
-import { getPerson, getTeam } from '../data/selectors.js'
+import { useOrgData } from '../data/orgContext.js'
 import './OrgChart.css'
 
 const MIN_SCALE = 0.25
@@ -36,6 +35,7 @@ const LINE_RGB = [201, 236, 243] // --oc-line (#c9ecf3), for the native-drawn co
 // `register(id)`); its connector is drawn by the SVG layer's gutter route
 // rather than a CSS spine.
 function ExtraColumn({ id, slim, register }) {
+  const { getPerson } = useOrgData()
   return (
     <div className={slim ? 'oc-col oc-col--slim' : 'oc-col'}>
       <PersonCard ref={register(id)} person={getPerson(id)} />
@@ -53,6 +53,7 @@ function ExtraColumn({ id, slim, register }) {
 // their own card via ReportNode's usual recursion, just not relative to
 // their flat-list siblings (Michael, Haven, ...).
 function ReportColumn({ ids, slim, register }) {
+  const { getPerson } = useOrgData()
   return (
     <div className={slim ? 'oc-col oc-col--slim' : 'oc-col'}>
       {ids.map((id) => (
@@ -68,6 +69,7 @@ function ReportColumn({ ids, slim, register }) {
 // anchor for the leader — the bus drop starts below the pill — so the ref goes
 // on the block, not the inner card.
 function Group({ group, register }) {
+  const { getPerson, getTeam } = useOrgData()
   const leader = getPerson(group.leader)
   const leaderTeam = getTeam(group.leaderTeam)
   return (
@@ -97,6 +99,7 @@ function Group({ group, register }) {
 }
 
 const OrgChart = forwardRef(function OrgChart(_props, ref) {
+  const { layout, getPerson, getTeam } = useOrgData()
   const ceo = getPerson(layout.ceo)
   const canvasRef = useRef(null)
   const viewportRef = useRef(null)

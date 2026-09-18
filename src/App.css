@@ -19,3 +19,9 @@
   flex: 1;
   min-height: 0;
 }
+
+.oc-header__controls {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}

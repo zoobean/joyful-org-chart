@@ -1,26 +1,35 @@
-import { useLayoutEffect, useState } from 'react'
-import { layout } from '../data/org.js'
-import { getTeam } from '../data/selectors.js'
+import { useLayoutEffect, useMemo, useState } from 'react'
+import { useOrgData } from '../data/orgContext.js'
 import './ConnectorLayer.css'
 
 // ── Which nodes each bus connects (derived from the layout) ──────────────────
-// The head anchor for a layout column: a team's head, or a group's leader.
-const columnAnchor = (col) => (col.group ? col.group.leader : getTeam(col.team).head)
+// Derived per dataset rather than once at module scope: the chart can render
+// any of several org versions (see versions.js), and a version may add, drop,
+// or re-parent whole columns — so the bus topology has to be rebuilt whenever
+// the active layout changes.
+function busTopology(layout, getTeam) {
+  // The head anchor for a layout column: a team's head, or a group's leader.
+  const columnAnchor = (col) => (col.group ? col.group.leader : getTeam(col.team).head)
 
-// CEO → every top-level column head/leader.
-const ceoTargets = layout.columns.map(columnAnchor)
+  return {
+    // CEO → every top-level column head/leader.
+    ceoTargets: layout.columns.map(columnAnchor),
 
-// Each group leader → its sub-column heads plus any extras beside them
-// (Lindsey, Don), or every id in a plain `{ reports }` column (Dave Hopp's
-// own direct reports, split across columns with no team head) — all equal
-// bus targets, since a `{ reports }` column is a flat list of peers, not a
-// parent-child chain (see ReportColumn).
-const groupBuses = layout.columns
-  .filter((col) => col.group)
-  .map((col) => ({
-    leader: col.group.leader,
-    targets: col.group.columns.flatMap((c) => (c.reports ? c.reports : [getTeam(c.team).head, ...(c.extras || [])])),
-  }))
+    // Each group leader → its sub-column heads plus any extras beside them
+    // (Lindsey, Don), or every id in a plain `{ reports }` column (Dave Hopp's
+    // own direct reports, split across columns with no team head) — all equal
+    // bus targets, since a `{ reports }` column is a flat list of peers, not a
+    // parent-child chain (see ReportColumn).
+    groupBuses: layout.columns
+      .filter((col) => col.group)
+      .map((col) => ({
+        leader: col.group.leader,
+        targets: col.group.columns.flatMap((c) =>
+          c.reports ? c.reports : [getTeam(c.team).head, ...(c.extras || [])]
+        ),
+      })),
+  }
+}
 
 // ── Geometry (ported from the reference) ─────────────────────────────────────
 // Every measurement is relative to the canvas's top-left origin, in the
@@ -143,6 +152,8 @@ function curvedBusPath(m, kids) {
 // construction (box() divides it back out), this recompute is cheap and safe
 // to run on every zoom tick rather than needing a stale-closure workaround.
 export default function ConnectorLayer({ canvasRef, anchorsRef, scale }) {
+  const { layout, getTeam } = useOrgData()
+  const { ceoTargets, groupBuses } = useMemo(() => busTopology(layout, getTeam), [layout, getTeam])
   const [{ width, height, paths, lineColor }, setState] = useState({
     width: 0,
     height: 0,
@@ -201,7 +212,7 @@ export default function ConnectorLayer({ canvasRef, anchorsRef, scale }) {
       ro.disconnect()
       window.removeEventListener('resize', recompute)
     }
-  }, [canvasRef, anchorsRef, scale])
+  }, [canvasRef, anchorsRef, scale, layout, ceoTargets, groupBuses])
 
   return (
     <svg className="oc-canvas__lines" width={width} height={height} aria-hidden="true">
