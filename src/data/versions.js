@@ -67,6 +67,13 @@ function matchTitle(d, sourceId, ids) {
 /** Drops a person AND their remaining reports. Move anyone who stays first. */
 const remove = (d, id) => void detach(d, id)
 
+/** Adds a brand-new person under a manager — e.g. an unfilled seat. */
+function addReport(d, managerId, person) {
+  const manager = find(d.org, managerId)
+  if (!manager) throw new Error(`addReport: no manager "${managerId}"`)
+  manager.reports.push({ ...person, reports: [] })
+}
+
 // ── Layout helpers ─────────────────────────────────────────────────────────
 // Reporting line and visual placement are separate concerns (see org.js), so
 // a version that re-parents someone usually has to say where they now render.
@@ -75,6 +82,20 @@ const remove = (d, id) => void detach(d, id)
 function dropTeam(d, teamId) {
   d.teams = d.teams.filter((t) => t.id !== teamId)
   d.layout.columns = d.layout.columns.filter((c) => c.team !== teamId)
+}
+
+/**
+ * Stops listing `ids` as top-level cards in a group's `{ reports }` columns.
+ * Needed after re-parenting someone under a card that is itself in that
+ * column: they would otherwise render TWICE, once as a listed entry and once
+ * nested under their new manager (see ReportColumn and ReportNode).
+ */
+function unrender(d, leaderId, ids) {
+  const group = d.layout.columns.find((c) => c.group?.leader === leaderId)?.group
+  if (!group) throw new Error(`unrender: no group for "${leaderId}"`)
+  group.columns.forEach((c) => {
+    if (c.reports) c.reports = c.reports.filter((id) => !ids.includes(id))
+  })
 }
 
 /**
@@ -117,6 +138,26 @@ export const versions = [
       // business development team leads.
       matchTitle(d, 'coley-martin', ['don-giacomini', 'bryana-snyder'])
       matchTitle(d, 'lauren-brami', ['haven-gotham'])
+
+      // The AE book splits across the three regional managers. Each mover
+      // also stops being a top-level card in Hopp's column, since they now
+      // render nested under their new manager there.
+      const books = {
+        'coley-martin': ['jessica-fulton', 'becca-traxler', 'chelsea-mccoy'],
+        'don-giacomini': ['beth-halaz'],
+        'bryana-snyder': ['amanda-taylor'],
+      }
+      Object.entries(books).forEach(([manager, ids]) => {
+        ids.forEach((id) => move(d, id, manager))
+        unrender(d, 'dave-hopp', ids)
+      })
+
+      // Unfilled seats, following this chart's earlier convention for them:
+      // the card is named TBD and carries the role as its title.
+      addReport(d, 'haven-gotham', { id: 'tbd-bdr-1', name: 'TBD', title: 'Business Development Rep' })
+      addReport(d, 'haven-gotham', { id: 'tbd-bdr-2', name: 'TBD', title: 'Business Development Rep' })
+      addReport(d, 'coley-martin', { id: 'tbd-ae-1', name: 'TBD', title: 'Account Executive' })
+      addReport(d, 'don-giacomini', { id: 'tbd-ae-2', name: 'TBD', title: 'Account Executive' })
 
       // Only now is Ian childless and safe to drop without taking anyone with him.
       remove(d, 'ian-singer')
