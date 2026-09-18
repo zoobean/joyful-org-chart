@@ -11,10 +11,13 @@
   background: transparent;
 }
 
+/* Names take their department's ink — the readable counterpart of the pale
+   border beside them, not the border value itself, which would be unreadable
+   as text. Cards outside any department (the CEO) keep the brand green. */
 .oc-card__name {
   font-weight: 700;
   font-size: 13px;
-  color: var(--oc-green);
+  color: var(--oc-team-fg, var(--oc-green));
 }
 
 .oc-card__title {
