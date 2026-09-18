@@ -112,23 +112,37 @@ function curvedBusPath(m, kids, managerColor) {
   // department, that's the neutral root line.
   const segments = []
 
-  if (aligned) {
-    // When one kid's gutter x exactly matches mx, the manager's stem and that
-    // kid's drop are collinear: originally one path, split here only so the
-    // two can carry different colors. A straight vertical join is seamless —
-    // unlike the curve-to-curve join the merge was there to avoid.
-    segments.push({ d: `M ${mx} ${m.bottom} V ${railY}`, color: managerColor })
-    // The rail for any OTHER kids branches off that straight line at railY —
-    // a plain T, no leading curve, since the stem already passes through here.
-    if (kids.length > 1) {
-      segments.push({ d: `M ${mx} ${railY} H ${railEnd}`, color: managerColor })
+  // The manager's own stem down to the rail. When one kid's gutter x exactly
+  // matches mx the stem and that kid's drop are collinear: originally one
+  // path, split here only so the two can carry different colors. A straight
+  // vertical join is seamless — unlike the curve-to-curve join the merge was
+  // there to avoid. Otherwise the stem curves into the rail itself.
+  segments.push(
+    aligned
+      ? { d: `M ${mx} ${m.bottom} V ${railY}`, color: managerColor }
+      : {
+          d: `M ${mx} ${m.bottom} V ${railY - r} Q ${mx} ${railY} ${mx + r} ${railY}`,
+          color: managerColor,
+        }
+  )
+
+  // The rail, BROKEN AT EACH KID'S GUTTER. A stretch runs from one kid's drop
+  // to the next kid's, which means it passes over that first kid's column — so
+  // it takes that column's color. Drawn as one path instead, the rail is a
+  // single color cutting straight across every department it spans, which
+  // leaves e.g. a teal line hanging over the green school sales column.
+  //
+  // The last kid gets no stretch: the rail stops short of its gutter (railEnd),
+  // where that kid's own curve peels away.
+  const stops = [...kids].sort((a, b) => gx(a) - gx(b)).map((k) => ({ x: gx(k), color: k.color }))
+  // A manager not aligned with its first kid owns the stretch up to it.
+  if (!aligned) stops.unshift({ x: mx + r, color: managerColor })
+
+  for (let i = 0; i < stops.length - 1; i++) {
+    const to = i === stops.length - 2 ? railEnd : stops[i + 1].x
+    if (to > stops[i].x) {
+      segments.push({ d: `M ${stops[i].x} ${railY} H ${to}`, color: stops[i].color })
     }
-  } else {
-    // No kid to hand off to, so the stem curves into the rail itself.
-    segments.push({
-      d: `M ${mx} ${m.bottom} V ${railY - r} Q ${mx} ${railY} ${mx + r} ${railY} H ${railEnd}`,
-      color: managerColor,
-    })
   }
 
   kids.forEach((k) => {
