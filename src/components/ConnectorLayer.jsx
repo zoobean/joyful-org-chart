@@ -235,7 +235,14 @@ export default function ConnectorLayer({ canvasRef, anchorsRef, scale }) {
 
       // 1. CEO → column heads, with the same curved side-on approach as
       // every other bus (see curvedBusPath above).
-      ds.push(...curvedBusPath(B(layout.ceo), ceoTargets.map(Bcard), teamColor(layout.ceo)))
+      //
+      // The whole bus is neutral: it belongs to no department, and the color
+      // starts at the card each line arrives at. Coloring its stretches by the
+      // column they pass over instead put a department's color on company-level
+      // plumbing, and left a teal that read as Product.
+      const ceoColor = teamColor(layout.ceo)
+      const ceoKids = ceoTargets.map((id) => ({ ...Bcard(id), color: ceoColor }))
+      ds.push(...curvedBusPath(B(layout.ceo), ceoKids, ceoColor))
 
       // 2. Each group leader → its sub-column heads (and beside-column extras).
       // A group's bus BELONGS TO ITS LEADER's department, so the whole thing —
