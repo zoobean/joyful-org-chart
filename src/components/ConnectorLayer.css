@@ -5,10 +5,15 @@
   pointer-events: none;
 }
 
-/* Same line tokens as the CSS elbow spines, so both layers read as one system. */
+/* Weight and cap only — the same tokens as the CSS elbow spines, so both
+   layers read as one system.
+
+   DO NOT set `stroke` here. Each path carries its own department color as a
+   stroke ATTRIBUTE, and a stylesheet rule beats a presentation attribute, so
+   a `stroke` declaration in this block silently repaints every connector in
+   one color while the attributes still read correctly in the DOM. */
 .oc-canvas__lines path {
   fill: none;
-  stroke: var(--oc-line);
   stroke-width: var(--oc-line-weight);
   stroke-linecap: round;
 }

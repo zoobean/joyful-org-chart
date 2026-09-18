@@ -257,7 +257,8 @@ export default function ConnectorLayer({ canvasRef, anchorsRef, scale }) {
   return (
     <svg className="oc-canvas__lines" width={width} height={height} aria-hidden="true">
       {paths.map((p, i) => (
-        <path key={i} d={p.d} fill="none" stroke={p.color} strokeWidth={2} strokeLinecap="butt" />
+        // stroke is set per path here; width and cap come from the stylesheet.
+        <path key={i} d={p.d} stroke={p.color} />
       ))}
     </svg>
   )
