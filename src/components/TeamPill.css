@@ -7,8 +7,8 @@
 }
 
 .oc-pill {
-  background: var(--oc-pill-bg);
-  color: var(--oc-pill-fg);
+  background: var(--oc-team-bg, var(--oc-pill-bg));
+  color: var(--oc-team-fg, var(--oc-pill-fg));
   font-size: 10px;
   font-weight: 700;
   letter-spacing: 0.05em;

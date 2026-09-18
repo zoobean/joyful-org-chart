@@ -32,7 +32,8 @@ export default function TeamColumn({ team, slim = false, showLabel = true, regis
   const { getPerson } = useOrgData()
   const head = getPerson(team.head)
   return (
-    <div className={slim ? 'oc-col oc-col--slim' : 'oc-col'}>
+    // data-team colors everything inside by inheritance — see index.css.
+    <div className={slim ? 'oc-col oc-col--slim' : 'oc-col'} data-team={team.id}>
       <div className="oc-node">
         <PersonCard ref={register(head.id)} person={head} />
         <TeamPill name={team.name} showLabel={showLabel} />

@@ -5,7 +5,8 @@
   --oc-elbow-radius: 7px;
 
   /* Cards */
-  --oc-card-border: #dcdcd6;
+  --oc-card-border-base: #dcdcd6;
+  --oc-card-border: var(--oc-card-border-base);
   --oc-card-bg: #fff;
 
   /* Brand */
@@ -24,6 +25,67 @@
   --oc-text: #222;
   --oc-text-muted: #666;
   --oc-chrome-border: #e7e7e0;
+}
+
+/* ── Department colors ───────────────────────────────────────────────────────
+   Set via data-team on a team column, and on a group so its leader card and
+   its plain `{ reports }` columns inherit the leader's department. Everything
+   inside then picks the department up by inheritance — no prop drilling:
+     • the pill takes --oc-team-bg / --oc-team-fg
+     • the CSS spines follow --oc-line, which by design is the same value as
+       the pill background
+     • card borders take a light wash of the department ink
+
+   The SVG cross-column buses deliberately stay NEUTRAL: ConnectorLayer reads
+   --oc-line off :root, not off a column, and those lines span departments
+   rather than belonging to any one of them.
+
+   Every pair below clears WCAG AA (>= 4.5:1) for the pill's small bold text;
+   the tightest is school-client-success at 4.83:1. */
+[data-team='product'] {
+  --oc-team-bg: #c9ecf3;
+  --oc-team-fg: #066b7a;
+}
+
+[data-team='business-optimization'] {
+  --oc-team-bg: #e3dcf5;
+  --oc-team-fg: #574194;
+}
+
+[data-team='marketing'] {
+  --oc-team-bg: #fbd9e7;
+  --oc-team-fg: #9c3567;
+}
+
+[data-team='business-operations'] {
+  --oc-team-bg: #fae5c3;
+  --oc-team-fg: #855310;
+}
+
+[data-team='pal'] {
+  --oc-team-bg: #d4e3fb;
+  --oc-team-fg: #285a9e;
+}
+
+[data-team='school-sales'] {
+  --oc-team-bg: #d6ead0;
+  --oc-team-fg: #3a6a30;
+}
+
+[data-team='school-client-success'] {
+  --oc-team-bg: #fcdbd1;
+  --oc-team-fg: #a1432a;
+}
+
+[data-team='engineering'] {
+  --oc-team-bg: #dcdef5;
+  --oc-team-fg: #414c8c;
+}
+
+/* Shared derivations, so each department above only states its two colors. */
+[data-team] {
+  --oc-line: var(--oc-team-bg);
+  --oc-card-border: color-mix(in srgb, var(--oc-team-fg) 20%, var(--oc-card-border-base));
 }
 
 * {

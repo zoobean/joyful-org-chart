@@ -73,7 +73,7 @@ function Group({ group, register }) {
   const leader = getPerson(group.leader)
   const leaderTeam = getTeam(group.leaderTeam)
   return (
-    <div className="oc-group">
+    <div className="oc-group" data-team={group.leaderTeam}>
       <div className="oc-leader-wrap">
         <div className="oc-leader-block" ref={register(group.leader)}>
           <PersonCard person={leader} />
