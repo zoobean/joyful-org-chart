@@ -138,6 +138,14 @@ export const versions = [
       // carries Camille, Jenny and Simon with her — they are her subtree.
       move(d, 'elizabeth-ross', 'shaun-conway')
 
+      // A new leadership seat under Kelly Hiser, unfilled — same TBD
+      // convention as the open reqs above.
+      addReport(d, 'kelly-hiser', {
+        id: 'tbd-head-content-curriculum',
+        name: 'TBD',
+        title: 'Head of Content & Curriculum',
+      })
+
       // Don and Bryana step up to Coley's level; Haven joins the other two
       // business development team leads.
       matchTitle(d, 'coley-martin', ['don-giacomini', 'bryana-snyder'])
