@@ -53,6 +53,17 @@ function retitle(d, id, title) {
   person.title = title
 }
 
+/**
+ * Gives everyone in `ids` whatever title `sourceId` already has — for the
+ * common "same title as <person>" change. Reads from the source rather than
+ * repeating the string, so editing that title in org.js carries through.
+ */
+function matchTitle(d, sourceId, ids) {
+  const source = find(d.org, sourceId)
+  if (!source) throw new Error(`matchTitle: no person "${sourceId}"`)
+  ids.forEach((id) => retitle(d, id, source.title))
+}
+
 /** Drops a person AND their remaining reports. Move anyone who stays first. */
 const remove = (d, id) => void detach(d, id)
 
@@ -101,6 +112,11 @@ export const versions = [
 
       // Cleo keeps her title and both Library Success Managers, under Shaun.
       move(d, 'cleo-joyce', 'shaun-conway')
+
+      // Don and Bryana step up to Coley's level; Haven joins the other two
+      // business development team leads.
+      matchTitle(d, 'coley-martin', ['don-giacomini', 'bryana-snyder'])
+      matchTitle(d, 'lauren-brami', ['haven-gotham'])
 
       // Only now is Ian childless and safe to drop without taking anyone with him.
       remove(d, 'ian-singer')
