@@ -1,6 +1,9 @@
 :root {
   /* Connector / line system */
   --oc-line: #c9ecf3;
+  /* For connectors that belong to no department — the CEO's own stem.
+     Distinct from --oc-line, which is Product's colour too. */
+  --oc-line-neutral: #d4d4cc;
   --oc-line-weight: 2px;
   --oc-elbow-radius: 7px;
 

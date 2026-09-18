@@ -27,7 +27,9 @@
   position: absolute;
   left: -16px;
   top: -8px;
-  width: 13px;
+  /* Reaches the card's own edge: the stub starts 16px out, so it needs the
+     full 16 to touch. Anything less leaves a visible gap before the card. */
+  width: 16px;
   height: 28px;
   border-left: var(--oc-line-weight) solid var(--oc-line);
   border-bottom: var(--oc-line-weight) solid var(--oc-line);

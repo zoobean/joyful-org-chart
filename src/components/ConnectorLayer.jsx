@@ -140,11 +140,17 @@ function curvedBusPath(m, kids, managerColor) {
   // A manager not aligned with its first kid owns the stretch up to it.
   if (!aligned) stops.unshift({ x: mx + r, color: managerColor, curves: false })
 
+  // Where a stop breaks the rail: at a curving kid the rail has to stop r px
+  // early, since that is where the kid's own curve takes over. Both the
+  // stretch ENDING at a stop and the one STARTING from it use this same
+  // point — ending early but starting late leaves a gap in the rail.
+  const branch = (s) => (s.curves ? s.x - r : s.x)
+
   for (let i = 0; i < stops.length - 1; i++) {
-    const next = stops[i + 1]
-    const to = next.curves ? next.x - r : next.x
-    if (to > stops[i].x) {
-      segments.push({ d: `M ${stops[i].x} ${railY} H ${to}`, color: stops[i].color })
+    const from = branch(stops[i])
+    const to = branch(stops[i + 1])
+    if (to > from) {
+      segments.push({ d: `M ${from} ${railY} H ${to}`, color: stops[i].color })
     }
   }
 
@@ -196,16 +202,19 @@ export default function ConnectorLayer({ canvasRef, anchorsRef, scale }) {
       // module-level read would run before the stylesheet is injected and
       // always come back empty in dev. This effect runs post-mount, after
       // every module's top-level code (including index.css's) has run.
-      const rootLine = getComputedStyle(document.documentElement).getPropertyValue('--oc-line').trim()
+      const neutralLine = getComputedStyle(document.documentElement)
+        .getPropertyValue('--oc-line-neutral')
+        .trim()
 
       // A card's department color, taken from the same cascade that colors the
       // card itself: the nearest [data-team] ancestor (a team column, or the
-      // group a plain report column sits in). The CEO has no department, so he
-      // falls back to the neutral line.
+      // group a plain report column sits in). The CEO belongs to no department,
+      // so his own stem falls back to the neutral grey rather than --oc-line,
+      // which is Product's color and would read as though he sat in it.
       const teamColor = (id) => {
         const scope = anchors.get(id)?.closest('[data-team]')
         const value = scope && getComputedStyle(scope).getPropertyValue('--oc-team-bg').trim()
-        return value || rootLine
+        return value || neutralLine
       }
 
       const B = (id) => box(anchors.get(id), cRect, liveScale)
