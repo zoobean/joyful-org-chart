@@ -229,8 +229,16 @@ export default function ConnectorLayer({ canvasRef, anchorsRef, scale }) {
       ds.push(...curvedBusPath(B(layout.ceo), ceoTargets.map(Bcard), teamColor(layout.ceo)))
 
       // 2. Each group leader → its sub-column heads (and beside-column extras).
+      // A group's bus BELONGS TO ITS LEADER's department, so the whole thing —
+      // stem, rail and every drop — is one color. Letting each drop take its
+      // own sub-column instead (as the CEO bus does) broke Lainey's bus into
+      // pink over Marketing and amber over Business operations, when the bus
+      // is business optimization's own. The CEO has no department, so his rail
+      // still borrows whichever column it passes over.
       groupBuses.forEach((g) => {
-        ds.push(...curvedBusPath(B(g.leader), g.targets.map(Bcard), teamColor(g.leader)))
+        const leaderColor = teamColor(g.leader)
+        const kids = g.targets.map((id) => ({ ...Bcard(id), color: leaderColor }))
+        ds.push(...curvedBusPath(B(g.leader), kids, leaderColor))
       })
 
       setState({ width: canvas.scrollWidth, height: canvas.scrollHeight, paths: ds })
