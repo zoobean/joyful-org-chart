@@ -99,12 +99,6 @@ function curvedBusPath(m, kids, managerColor) {
   const maxX = Math.max(...kids.map(gx), mx)
   const r = 7 // corner radius, matching the existing card-entry curve
   const aligned = kids.find((k) => Math.abs(gx(k) - mx) < 1)
-  // The rightmost kid's own curve peels away starting r px before its gx (see
-  // below) — if the rail ran all the way to maxX, that last stretch would sit
-  // past where the curve already diverges, leaving a short straight stub
-  // poking out on its own. Stop it where that kid's curve picks up, unless
-  // maxX is mx itself (only one kid, no curve to hand off to).
-  const railEnd = maxX === mx ? maxX : maxX - r
 
   // Each kid's approach is drawn in ITS OWN department's color, so a line
   // arriving at a card matches that card. The manager's stem and the rail take
@@ -134,12 +128,21 @@ function curvedBusPath(m, kids, managerColor) {
   //
   // The last kid gets no stretch: the rail stops short of its gutter (railEnd),
   // where that kid's own curve peels away.
-  const stops = [...kids].sort((a, b) => gx(a) - gx(b)).map((k) => ({ x: gx(k), color: k.color }))
+  const stops = [...kids]
+    .sort((a, b) => gx(a) - gx(b))
+    // A kid whose gutter differs from the manager's peels off the rail with a
+    // curve that starts r px EARLY (see the kid paths below), so the stretch
+    // feeding it has to stop there. Running to the kid's gutter instead
+    // overshoots by r into the curve — invisible when the whole rail was one
+    // color, but now it paints the previous department over the start of the
+    // next one's approach.
+    .map((k) => ({ x: gx(k), color: k.color, curves: Math.abs(gx(k) - mx) >= 1 }))
   // A manager not aligned with its first kid owns the stretch up to it.
-  if (!aligned) stops.unshift({ x: mx + r, color: managerColor })
+  if (!aligned) stops.unshift({ x: mx + r, color: managerColor, curves: false })
 
   for (let i = 0; i < stops.length - 1; i++) {
-    const to = i === stops.length - 2 ? railEnd : stops[i + 1].x
+    const next = stops[i + 1]
+    const to = next.curves ? next.x - r : next.x
     if (to > stops[i].x) {
       segments.push({ d: `M ${stops[i].x} ${railY} H ${to}`, color: stops[i].color })
     }
