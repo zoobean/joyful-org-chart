@@ -67,6 +67,17 @@ function matchTitle(d, sourceId, ids) {
 /** Drops a person AND their remaining reports. Move anyone who stays first. */
 const remove = (d, id) => void detach(d, id)
 
+/**
+ * Swaps a person out for a new card in the same slot, keeping whoever
+ * reported to them — a replacement takes over the seat, not just the row.
+ */
+function replacePerson(d, id, person) {
+  const parent = parentOf(d.org, id)
+  if (!parent) throw new Error(`replacePerson: no parent for "${id}"`)
+  const i = parent.reports.findIndex((r) => r.id === id)
+  parent.reports[i] = { ...person, reports: parent.reports[i].reports }
+}
+
 /** Adds a brand-new person under a manager — e.g. an unfilled seat. */
 function addReport(d, managerId, person) {
   const manager = find(d.org, managerId)
@@ -138,12 +149,17 @@ export const versions = [
       // carries Camille, Jenny and Simon with her — they are her subtree.
       move(d, 'elizabeth-ross', 'shaun-conway')
 
-      // A new leadership seat under Kelly Hiser, unfilled — same TBD
-      // convention as the open reqs above.
-      addReport(d, 'kelly-hiser', {
-        id: 'tbd-head-content-curriculum',
+      // Two unfilled product seats, following the chart's TBD convention.
+      // Brooke's is a replacement, so it keeps her place in Kelly's list.
+      replacePerson(d, 'brooke-keene', {
+        id: 'tbd-pm-delivery',
         name: 'TBD',
-        title: 'Head of Content & Curriculum',
+        title: 'Product Manager, Delivery',
+      })
+      addReport(d, 'kelly-hiser', {
+        id: 'tbd-apm-quality-support',
+        name: 'TBD',
+        title: 'Associate Product Manager, Quality and Support',
       })
 
       // Don and Bryana step up to Coley's level; Haven joins the other two
@@ -175,9 +191,10 @@ export const versions = [
       remove(d, 'ian-singer')
       dropTeam(d, 'pal')
 
-      // Placed with Hopp's other cards that carry reports of their own,
-      // rather than appended below the lone IC at the end of that column.
-      renderAfter(d, 'dave-hopp', 'michael-kideckel', 'jillian-tweet')
+      // Jillian renders in the same column as Coley, after him. Joe comes
+      // along without being named here — he is nested under her in the tree.
+      unrender(d, 'dave-hopp', ['jillian-tweet'])
+      renderAfter(d, 'dave-hopp', 'coley-martin', 'jillian-tweet')
       return d
     },
   },
