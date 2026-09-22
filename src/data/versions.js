@@ -110,6 +110,29 @@ function unrender(d, leaderId, ids) {
 }
 
 /**
+ * Turns a plain team column into a GROUP — a leader card spanning a row of
+ * sub-columns, the shape Dave Hopp's column already has. Each sub-column is a
+ * flat list of the leader's own direct reports; anyone reporting to THEM
+ * still nests underneath as usual.
+ *
+ * Every one of the leader's reports has to appear in exactly one of the
+ * lists: a group's columns name their cards explicitly, so anyone left out
+ * simply stops rendering.
+ */
+function regroup(d, teamId, columns) {
+  const team = d.teams.find((t) => t.id === teamId)
+  const i = d.layout.columns.findIndex((c) => c.team === teamId)
+  if (!team || i === -1) throw new Error(`regroup: no team column "${teamId}"`)
+  d.layout.columns[i] = {
+    group: {
+      leader: team.head,
+      leaderTeam: teamId,
+      columns: columns.map((reports) => ({ reports, slim: true })),
+    },
+  }
+}
+
+/**
  * Renders `id` inside a group leader's `{ reports }` column, directly after
  * `afterId`. Without this a newly re-parented card never appears: a group's
  * columns list their cards explicitly.
@@ -190,6 +213,13 @@ export const versions = [
       // Only now is Ian childless and safe to drop without taking anyone with him.
       remove(d, 'ian-singer')
       dropTeam(d, 'pal')
+
+      // Client Success splits into two columns like Sales: the school success
+      // people, then the two teams that moved in above.
+      regroup(d, 'school-client-success', [
+        ['lauren-hantzes', 'tammy-mcintyre', 'emily-peterson', 'kelly-williams', 'stella-bromley'],
+        ['cleo-joyce', 'elizabeth-ross'],
+      ])
 
       // Jillian renders in the same column as Coley, after him. Joe comes
       // along without being named here — he is nested under her in the tree.
