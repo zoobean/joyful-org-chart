@@ -59,6 +59,18 @@ function moveToTop(d, id, managerId) {
   manager.reports.unshift(person)
 }
 
+/** Swaps two of a manager's reports around — card order follows the tree. */
+function swapReports(d, managerId, idA, idB) {
+  const manager = find(d.org, managerId)
+  if (!manager) throw new Error(`swapReports: no manager "${managerId}"`)
+  const i = manager.reports.findIndex((r) => r.id === idA)
+  const j = manager.reports.findIndex((r) => r.id === idB)
+  if (i === -1 || j === -1) {
+    throw new Error(`swapReports: "${idA}" and "${idB}" are not both under "${managerId}"`)
+  }
+  ;[manager.reports[i], manager.reports[j]] = [manager.reports[j], manager.reports[i]]
+}
+
 function retitle(d, id, title) {
   const person = find(d.org, id)
   if (!person) throw new Error(`retitle: no person "${id}"`)
@@ -198,6 +210,7 @@ export const versions = [
       move(d, 'simon-desalvo', 'elizabeth-ross')
       move(d, 'jenny-plummer', 'kelly-hiser')
       retitle(d, 'jenny-plummer', 'Associate Product Manager, Quality and Support')
+      swapReports(d, 'kelly-hiser', 'jenny-plummer', 'tbd-pm-delivery')
 
       // Don and Bryana step up to Coley's level; Haven joins the other two
       // business development team leads.
