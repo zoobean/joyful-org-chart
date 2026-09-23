@@ -96,7 +96,8 @@ function dropTeam(d, teamId) {
 }
 
 /**
- * Stops listing `ids` as top-level cards in a group's `{ reports }` columns.
+ * Stops listing `ids` as top-level cards in a group — in its `{ reports }`
+ * columns or in the `extras` beside a team sub-column.
  * Needed after re-parenting someone under a card that is itself in that
  * column: they would otherwise render TWICE, once as a listed entry and once
  * nested under their new manager (see ReportColumn and ReportNode).
@@ -106,6 +107,7 @@ function unrender(d, leaderId, ids) {
   if (!group) throw new Error(`unrender: no group for "${leaderId}"`)
   group.columns.forEach((c) => {
     if (c.reports) c.reports = c.reports.filter((id) => !ids.includes(id))
+    if (c.extras) c.extras = c.extras.filter((id) => !ids.includes(id))
   })
 }
 
@@ -203,11 +205,17 @@ export const versions = [
         unrender(d, 'dave-hopp', ids)
       })
 
+      // Lindsey joins Sales under Coley. She rendered beside Business
+      // operations as a card whose reporting line pointed at Lainey, so that
+      // placement goes too — otherwise she would draw twice.
+      move(d, 'lindsey-hill', 'coley-martin')
+      retitle(d, 'lindsey-hill', 'Principal Account Executive')
+      unrender(d, 'lainey-franks', ['lindsey-hill'])
+
       // Unfilled seats, following this chart's earlier convention for them:
       // the card is named TBD and carries the role as its title.
       addReport(d, 'haven-gotham', { id: 'tbd-bdr-1', name: 'TBD', title: 'Business Development Rep' })
-      addReport(d, 'haven-gotham', { id: 'tbd-bdr-2', name: 'TBD', title: 'Business Development Rep' })
-      addReport(d, 'coley-martin', { id: 'tbd-ae-1', name: 'TBD', title: 'Account Executive' })
+      addReport(d, 'bryana-snyder', { id: 'tbd-ae-1', name: 'TBD', title: 'Account Executive' })
       addReport(d, 'don-giacomini', { id: 'tbd-ae-2', name: 'TBD', title: 'Account Executive' })
 
       // Only now is Ian childless and safe to drop without taking anyone with him.
