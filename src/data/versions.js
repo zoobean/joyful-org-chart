@@ -193,11 +193,11 @@ export const versions = [
         name: 'TBD',
         title: 'Product Manager, Delivery',
       })
-      addReport(d, 'kelly-hiser', {
-        id: 'tbd-apm-quality-support',
-        name: 'TBD',
-        title: 'Associate Product Manager, Quality and Support',
-      })
+      // Jenny fills the APM seat, so it is hers rather than a TBD. Simon
+      // stays in Product Support, moving up to Elizabeth.
+      move(d, 'simon-desalvo', 'elizabeth-ross')
+      move(d, 'jenny-plummer', 'kelly-hiser')
+      retitle(d, 'jenny-plummer', 'Associate Product Manager, Quality and Support')
 
       // Don and Bryana step up to Coley's level; Haven joins the other two
       // business development team leads.
@@ -217,10 +217,11 @@ export const versions = [
         unrender(d, 'dave-hopp', ids)
       })
 
-      // Lindsey joins Sales under Coley. She rendered beside Business
+      // Lindsey joins Sales under Hopp himself. She rendered beside Business
       // operations as a card whose reporting line pointed at Lainey, so that
-      // placement goes too — otherwise she would draw twice.
-      moveToTop(d, 'lindsey-hill', 'coley-martin')
+      // placement goes too — otherwise she would draw twice. Reporting to the
+      // group leader, she needs her own entry in one of his columns.
+      move(d, 'lindsey-hill', 'dave-hopp')
       retitle(d, 'lindsey-hill', 'Principal Account Executive')
       unrender(d, 'lainey-franks', ['lindsey-hill'])
 
@@ -245,6 +246,10 @@ export const versions = [
       // along without being named here — he is nested under her in the tree.
       unrender(d, 'dave-hopp', ['jillian-tweet'])
       renderAfter(d, 'dave-hopp', 'coley-martin', 'jillian-tweet')
+
+      // Lindsey follows her, and has to be placed after Jillian is in the
+      // column rather than earlier, when that column does not yet hold her.
+      renderAfter(d, 'dave-hopp', 'jillian-tweet', 'lindsey-hill')
       return d
     },
   },
