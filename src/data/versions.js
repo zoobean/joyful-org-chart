@@ -47,6 +47,18 @@ function move(d, id, managerId) {
   manager.reports.push(person)
 }
 
+/**
+ * Re-parents a person to the TOP of a manager's reports rather than the
+ * bottom. Card order within a column follows tree order, so this states the
+ * placement outright instead of leaving it to where the call happens to sit.
+ */
+function moveToTop(d, id, managerId) {
+  const person = detach(d, id)
+  const manager = find(d.org, managerId)
+  if (!manager) throw new Error(`moveToTop: no manager "${managerId}"`)
+  manager.reports.unshift(person)
+}
+
 function retitle(d, id, title) {
   const person = find(d.org, id)
   if (!person) throw new Error(`retitle: no person "${id}"`)
@@ -208,7 +220,7 @@ export const versions = [
       // Lindsey joins Sales under Coley. She rendered beside Business
       // operations as a card whose reporting line pointed at Lainey, so that
       // placement goes too — otherwise she would draw twice.
-      move(d, 'lindsey-hill', 'coley-martin')
+      moveToTop(d, 'lindsey-hill', 'coley-martin')
       retitle(d, 'lindsey-hill', 'Principal Account Executive')
       unrender(d, 'lainey-franks', ['lindsey-hill'])
 
