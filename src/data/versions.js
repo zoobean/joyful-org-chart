@@ -203,7 +203,7 @@ export const versions = [
       replacePerson(d, 'brooke-keene', {
         id: 'tbd-pm-delivery',
         name: 'TBD',
-        title: 'Product Manager, Delivery',
+        title: 'Senior Product Manager, Delivery',
       })
       // Jenny fills the APM seat, so it is hers rather than a TBD. Simon
       // stays in Product Support, moving up to Elizabeth.
