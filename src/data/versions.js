@@ -238,12 +238,6 @@ export const versions = [
       retitle(d, 'lindsey-hill', 'Principal Account Executive')
       unrender(d, 'lainey-franks', ['lindsey-hill'])
 
-      // Unfilled seats, following this chart's earlier convention for them:
-      // the card is named TBD and carries the role as its title.
-      addReport(d, 'haven-gotham', { id: 'tbd-bdr-1', name: 'TBD', title: 'Business Development Rep' })
-      addReport(d, 'bryana-snyder', { id: 'tbd-ae-1', name: 'TBD', title: 'Account Executive' })
-      addReport(d, 'don-giacomini', { id: 'tbd-ae-2', name: 'TBD', title: 'Account Executive' })
-
       // Only now is Ian childless and safe to drop without taking anyone with him.
       remove(d, 'ian-singer')
       dropTeam(d, 'pal')
