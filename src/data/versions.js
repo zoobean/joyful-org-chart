@@ -242,6 +242,14 @@ export const versions = [
       remove(d, 'ian-singer')
       dropTeam(d, 'pal')
 
+      // Two new engineering seats, unfilled, following the TBD convention.
+      addReport(d, 'tyler-ewing', { id: 'tbd-junior-developer', name: 'TBD', title: 'Junior Developer' })
+      addReport(d, 'tyler-ewing', {
+        id: 'tbd-forward-deployed-ai-engineer',
+        name: 'TBD',
+        title: 'Forward Deployed AI Engineer',
+      })
+
       // Client Success splits into two columns like Sales: the school success
       // people, then the two teams that moved in above.
       regroup(d, 'school-client-success', [
