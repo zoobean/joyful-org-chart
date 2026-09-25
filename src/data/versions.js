@@ -212,10 +212,11 @@ export const versions = [
       retitle(d, 'jenny-plummer', 'Associate Product Manager, Quality and Support')
       swapReports(d, 'kelly-hiser', 'jenny-plummer', 'tbd-pm-delivery')
 
-      // Don and Bryana step up to Coley's level; Haven joins the other two
-      // business development team leads.
-      matchTitle(d, 'coley-martin', ['don-giacomini', 'bryana-snyder'])
-      matchTitle(d, 'lauren-brami', ['haven-gotham'])
+      // Don and Bryana step up, and Haven takes a senior IC title rather
+      // than the team lead one Lauren and Michael share.
+      retitle(d, 'don-giacomini', 'Regional Sales Team Lead')
+      retitle(d, 'bryana-snyder', 'Regional Sales Team Lead')
+      retitle(d, 'haven-gotham', 'Strategic Business Development Representative')
 
       // The AE book splits across the three regional managers. Each mover
       // also stops being a top-level card in Hopp's column, since they now
@@ -242,8 +243,18 @@ export const versions = [
       remove(d, 'ian-singer')
       dropTeam(d, 'pal')
 
+      retitle(d, 'alex-burnsides', 'Sales Enablement Lead')
+      retitle(d, 'brittinee-phillips', 'Marketing Manager, Community & Social')
+
+      // Paktra's seat becomes an unfilled events role.
+      replacePerson(d, 'paktra-lynch', {
+        id: 'tbd-amm-events',
+        name: 'TBD',
+        title: 'Associate Marketing Manager, Events',
+      })
+
       // Two new engineering seats, unfilled, following the TBD convention.
-      addReport(d, 'tyler-ewing', { id: 'tbd-junior-developer', name: 'TBD', title: 'Junior Developer' })
+      addReport(d, 'tyler-ewing', { id: 'tbd-associate-developer', name: 'TBD', title: 'Associate Developer' })
       addReport(d, 'tyler-ewing', {
         id: 'tbd-forward-deployed-ai-engineer',
         name: 'TBD',
