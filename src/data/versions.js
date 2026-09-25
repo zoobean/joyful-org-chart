@@ -244,9 +244,13 @@ export const versions = [
       dropTeam(d, 'pal')
 
       retitle(d, 'alex-burnsides', 'Sales Enablement Lead')
-      retitle(d, 'brittinee-phillips', 'Marketing Manager, Community & Social')
 
-      // Paktra's seat becomes an unfilled events role.
+      // Both marketing seats are unfilled, each keeping its place in the list.
+      replacePerson(d, 'brittinee-phillips', {
+        id: 'tbd-mm-community-social',
+        name: 'TBD',
+        title: 'Marketing Manager, Community & Social',
+      })
       replacePerson(d, 'paktra-lynch', {
         id: 'tbd-amm-events',
         name: 'TBD',
