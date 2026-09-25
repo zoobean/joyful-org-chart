@@ -257,6 +257,13 @@ export const versions = [
         title: 'Associate Marketing Manager, Events',
       })
 
+      // An unfilled finance seat under Akshat.
+      addReport(d, 'akshat-khandelwal', {
+        id: 'tbd-financial-controller',
+        name: 'TBD',
+        title: 'Financial Controller',
+      })
+
       // Two new engineering seats, unfilled, following the TBD convention.
       addReport(d, 'tyler-ewing', { id: 'tbd-associate-developer', name: 'TBD', title: 'Associate Developer' })
       addReport(d, 'tyler-ewing', {
