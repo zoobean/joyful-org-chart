@@ -258,16 +258,16 @@ export const versions = [
       ])
       assignTeam(d, 'jillian-tweet', [['joe-barrette', 'Account Executive, PALS']])
       assignTeam(d, 'lauren-brami', [
-        ['haven-gotham', 'Strategic Business Development Representative'],
-        ['andrea-mullon', 'Business Development Rep'],
-        ['esmy-clavel', 'Business Development Rep'],
-        ['steven-dimiceli', 'Business Development Rep'],
+        ['haven-gotham', 'Strategic BDR'],
+        ['andrea-mullon', 'BDR'],
+        ['esmy-clavel', 'BDR'],
+        ['steven-dimiceli', 'BDR'],
       ])
       assignTeam(d, 'michael-kideckel', [
-        ['ciera-baker', 'Business Development Rep'],
-        ['amanda-garner', 'Assoc. Business Development Rep'],
-        ['akua-peprah', 'Assoc. Business Development Rep'],
-        ['jessica-molloy', 'Assoc. Business Development Rep'],
+        ['ciera-baker', 'BDR'],
+        ['amanda-garner', 'Associate BDR'],
+        ['akua-peprah', 'Associate BDR'],
+        ['jessica-molloy', 'Associate BDR'],
       ])
 
       setGroupColumns(d, 'dave-hopp', [
