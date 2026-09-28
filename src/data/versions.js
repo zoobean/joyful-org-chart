@@ -71,6 +71,17 @@ function swapReports(d, managerId, idA, idB) {
   ;[manager.reports[i], manager.reports[j]] = [manager.reports[j], manager.reports[i]]
 }
 
+/**
+ * Places `people` under `managerId` in the order given, retitling each — a
+ * whole team stated at once rather than as a series of separate edits.
+ */
+function assignTeam(d, managerId, people) {
+  people.forEach(([id, title]) => {
+    move(d, id, managerId)
+    retitle(d, id, title)
+  })
+}
+
 function retitle(d, id, title) {
   const person = find(d.org, id)
   if (!person) throw new Error(`retitle: no person "${id}"`)
@@ -158,6 +169,13 @@ function regroup(d, teamId, columns) {
   }
 }
 
+/** Replaces a group's sub-columns outright with the given lists of cards. */
+function setGroupColumns(d, leaderId, columns) {
+  const col = d.layout.columns.find((c) => c.group?.leader === leaderId)
+  if (!col) throw new Error(`setGroupColumns: no group for "${leaderId}"`)
+  col.group.columns = columns.map((reports) => ({ reports, slim: true }))
+}
+
 /**
  * Renders `id` inside a group leader's `{ reports }` column, directly after
  * `afterId`. Without this a newly re-parented card never appears: a group's
@@ -209,27 +227,8 @@ export const versions = [
       // stays in Product Support, moving up to Elizabeth.
       move(d, 'simon-desalvo', 'elizabeth-ross')
       move(d, 'jenny-plummer', 'kelly-hiser')
-      retitle(d, 'jenny-plummer', 'Associate Product Manager, Quality and Support')
+      retitle(d, 'jenny-plummer', 'Product Operations Lead')
       swapReports(d, 'kelly-hiser', 'jenny-plummer', 'tbd-pm-delivery')
-
-      // Don and Bryana step up, and Haven takes a senior IC title rather
-      // than the team lead one Lauren and Michael share.
-      retitle(d, 'don-giacomini', 'Regional Sales Team Lead')
-      retitle(d, 'bryana-snyder', 'Regional Sales Team Lead')
-      retitle(d, 'haven-gotham', 'Strategic Business Development Representative')
-
-      // The AE book splits across the three regional managers. Each mover
-      // also stops being a top-level card in Hopp's column, since they now
-      // render nested under their new manager there.
-      const books = {
-        'coley-martin': ['jessica-fulton', 'becca-traxler', 'chelsea-mccoy'],
-        'don-giacomini': ['beth-halaz'],
-        'bryana-snyder': ['amanda-taylor'],
-      }
-      Object.entries(books).forEach(([manager, ids]) => {
-        ids.forEach((id) => move(d, id, manager))
-        unrender(d, 'dave-hopp', ids)
-      })
 
       // Lindsey joins Sales under Hopp himself. She rendered beside Business
       // operations as a card whose reporting line pointed at Lainey, so that
@@ -238,6 +237,43 @@ export const versions = [
       move(d, 'lindsey-hill', 'dave-hopp')
       retitle(d, 'lindsey-hill', 'Principal Account Executive')
       unrender(d, 'lainey-franks', ['lindsey-hill'])
+
+      // ── Sales ────────────────────────────────────────────────────────────
+      // The finished shape, stated outright rather than as a series of edits,
+      // so these read the way the two columns do on screen. Everyone in Hopp's
+      // org is placed explicitly here, which is what lets the column lists at
+      // the end be complete — a group renders only the cards it names.
+      retitle(d, 'coley-martin', 'Regional Sales Manager')
+      retitle(d, 'don-giacomini', 'Regional Sales Manager')
+
+      assignTeam(d, 'coley-martin', [
+        ['chelsea-mccoy', 'Senior Account Executive'],
+        ['bryana-snyder', 'Senior Account Executive'],
+        ['jessica-fulton', 'Account Executive'],
+      ])
+      assignTeam(d, 'don-giacomini', [
+        ['becca-traxler', 'Account Executive'],
+        ['beth-halaz', 'Account Executive'],
+        ['amanda-taylor', 'Associate Account Executive'],
+      ])
+      assignTeam(d, 'jillian-tweet', [['joe-barrette', 'Account Executive, PALS']])
+      assignTeam(d, 'lauren-brami', [
+        ['haven-gotham', 'Strategic Business Development Representative'],
+        ['andrea-mullon', 'Business Development Rep'],
+        ['esmy-clavel', 'Business Development Rep'],
+        ['steven-dimiceli', 'Business Development Rep'],
+      ])
+      assignTeam(d, 'michael-kideckel', [
+        ['ciera-baker', 'Business Development Rep'],
+        ['amanda-garner', 'Assoc. Business Development Rep'],
+        ['akua-peprah', 'Assoc. Business Development Rep'],
+        ['jessica-molloy', 'Assoc. Business Development Rep'],
+      ])
+
+      setGroupColumns(d, 'dave-hopp', [
+        ['coley-martin', 'don-giacomini', 'lindsey-hill', 'jillian-tweet'],
+        ['lauren-brami', 'michael-kideckel'],
+      ])
 
       // Only now is Ian childless and safe to drop without taking anyone with him.
       remove(d, 'ian-singer')
@@ -278,15 +314,6 @@ export const versions = [
         ['lauren-hantzes', 'tammy-mcintyre', 'emily-peterson', 'kelly-williams', 'stella-bromley'],
         ['cleo-joyce', 'elizabeth-ross'],
       ])
-
-      // Jillian renders in the same column as Coley, after him. Joe comes
-      // along without being named here — he is nested under her in the tree.
-      unrender(d, 'dave-hopp', ['jillian-tweet'])
-      renderAfter(d, 'dave-hopp', 'coley-martin', 'jillian-tweet')
-
-      // Lindsey follows her, and has to be placed after Jillian is in the
-      // column rather than earlier, when that column does not yet hold her.
-      renderAfter(d, 'dave-hopp', 'jillian-tweet', 'lindsey-hill')
       return d
     },
   },
