@@ -191,7 +191,8 @@ function dropGroupColumn(d, leaderId, id) {
  * Gives a person a TOP-LEVEL column of their own, reporting straight to the
  * CEO. The CEO's reports are the layout's top-level columns, and a column needs
  * a team head to hang from — so this adds a team for them. `belowExecRow` starts
- * it a row down, for someone who reports to the CEO but is not on the exec team.
+ * it a row down with the team name as a chip above, for someone who reports to
+ * the CEO but is not on the exec team.
  * It goes before
  * `beforeLeaderId`'s group when one is given, and at the far right otherwise.
  * `showLabel: false` keeps the head-to-reports spine without a name badge, for

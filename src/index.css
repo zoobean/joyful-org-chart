@@ -106,6 +106,13 @@
   --oc-team-border: #dcdcd6;
 }
 
+/* The pill's ink, set here rather than as --oc-team-fg, which would also recolor
+   the names. Without it the pill falls back to teal, which fails AA on this grey
+   (4.15:1); this is 5.04:1. */
+[data-team='neutral'] .oc-pill {
+  color: #55554e;
+}
+
 * {
   box-sizing: border-box;
 }

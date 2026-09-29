@@ -11,7 +11,17 @@
    team. The connector layer already routes a line down to any card, however far
    below the rail, so this needs no drawing changes. */
 .oc-col--below-exec {
+  position: relative;
   margin-top: var(--oc-row-step);
+}
+
+/* The team chip sits above the head card, in the space that margin opens up.
+   Absolutely placed so it takes no room: the card must stay exactly one row
+   down, level with the exec teams' first reports. */
+.oc-col__chip {
+  position: absolute;
+  top: -28px;
+  left: 0;
 }
 
 .oc-node {

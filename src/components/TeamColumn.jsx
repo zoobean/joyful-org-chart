@@ -45,6 +45,9 @@ export default function TeamColumn({
         .join(' ')}
       data-team={team.id}
     >
+      {/* The team name as a chip above the head, in the space the row-down
+          opens up — it's what labels a column that isn't on the exec row. */}
+      {belowExecRow && <span className="oc-pill oc-pill--chip oc-col__chip">{team.name}</span>}
       <div className="oc-node">
         <PersonCard ref={register(head.id)} person={head} />
         <TeamPill name={team.name} showLabel={showLabel} />

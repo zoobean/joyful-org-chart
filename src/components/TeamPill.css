@@ -17,6 +17,14 @@
   border-radius: 0 999px 999px 0;
 }
 
+/* A chip that hangs off no spine — e.g. above a column that starts below the
+   exec row — so it is rounded on both sides rather than flat against a line. */
+.oc-pill--chip {
+  display: inline-block;
+  border-radius: 999px;
+  padding: 3px 10px;
+}
+
 /* Straight vertical spine to the LEFT of the pill. It runs flat past the pill —
    from the head card down to the reports — with no elbow turning into the pill. */
 .oc-pill-row::before {
