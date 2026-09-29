@@ -45,9 +45,10 @@ export default function TeamColumn({
         .join(' ')}
       data-team={team.id}
     >
-      {/* The team name as a chip above the head, in the space the row-down
-          opens up — it's what labels a column that isn't on the exec row. */}
-      {belowExecRow && <span className="oc-pill oc-pill--chip oc-col__chip">{team.name}</span>}
+      {/* The team label for a column that isn't on the exec row: the standard
+          pill, hung off the line that drops into this column from the CEO bus
+          (see .oc-col__chip) the way other labels hang off their spines. */}
+      {belowExecRow && <span className="oc-pill oc-col__chip">{team.name}</span>}
       <div className="oc-node">
         <PersonCard ref={register(head.id)} person={head} />
         <TeamPill name={team.name} showLabel={showLabel} />
