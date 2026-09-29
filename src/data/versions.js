@@ -378,7 +378,7 @@ export const versions = [
       // PAL column still uses that one.)
       addTopLevelColumn(d, {
         teamId: 'neutral',
-        name: 'PAL',
+        name: 'PALS',
         headId: 'jillian-tweet',
         belowExecRow: true,
       })
