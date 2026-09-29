@@ -28,12 +28,23 @@ export function ReportNode({ person, register }) {
 
 // A single column: a team head, its pill, and the head's reports. The head is
 // a connector anchor, so it registers its card element via `register(id)`.
-export default function TeamColumn({ team, slim = false, showLabel = true, register = () => () => {} }) {
+export default function TeamColumn({
+  team,
+  slim = false,
+  showLabel = true,
+  belowExecRow = false,
+  register = () => () => {},
+}) {
   const { getPerson } = useOrgData()
   const head = getPerson(team.head)
   return (
     // data-team colors everything inside by inheritance — see index.css.
-    <div className={slim ? 'oc-col oc-col--slim' : 'oc-col'} data-team={team.id}>
+    <div
+      className={['oc-col', slim && 'oc-col--slim', belowExecRow && 'oc-col--below-exec']
+        .filter(Boolean)
+        .join(' ')}
+      data-team={team.id}
+    >
       <div className="oc-node">
         <PersonCard ref={register(head.id)} person={head} />
         <TeamPill name={team.name} showLabel={showLabel} />

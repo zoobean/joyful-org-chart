@@ -190,14 +190,16 @@ function dropGroupColumn(d, leaderId, id) {
 /**
  * Gives a person a TOP-LEVEL column of their own, reporting straight to the
  * CEO. The CEO's reports are the layout's top-level columns, and a column needs
- * a team head to hang from — so this adds a team for them. It goes before
+ * a team head to hang from — so this adds a team for them. `belowExecRow` starts
+ * it a row down, for someone who reports to the CEO but is not on the exec team.
+ * It goes before
  * `beforeLeaderId`'s group when one is given, and at the far right otherwise.
  * `showLabel: false` keeps the head-to-reports spine without a name badge, for
  * a column already named by its head's own title.
  */
-function addTopLevelColumn(d, { teamId, name, headId, beforeLeaderId }) {
+function addTopLevelColumn(d, { teamId, name, headId, beforeLeaderId, belowExecRow = false }) {
   d.teams.push({ id: teamId, name, head: headId })
-  const column = { team: teamId, showLabel: false }
+  const column = { team: teamId, showLabel: false, ...(belowExecRow && { belowExecRow }) }
   if (!beforeLeaderId) {
     d.layout.columns.push(column)
     return
@@ -368,11 +370,17 @@ export const versions = [
       move(d, 'jillian-tweet', 'felix-lloyd')
       dropGroupColumn(d, 'lainey-franks', 'jillian-tweet')
 
-      // Her own column at the far right, after Engineering. It uses the
+      // Her own column at the far right, after Engineering, starting a row
+      // down: she reports to Felix but is not on the exec team. It uses the
       // neutral palette entry, so she and Joe match the CEO rather than
       // carrying PAL's blue. (Not the 'pal' team itself: the current chart's
       // PAL column still uses that one.)
-      addTopLevelColumn(d, { teamId: 'neutral', name: 'PAL', headId: 'jillian-tweet' })
+      addTopLevelColumn(d, {
+        teamId: 'neutral',
+        name: 'PAL',
+        headId: 'jillian-tweet',
+        belowExecRow: true,
+      })
       return d
     },
   },

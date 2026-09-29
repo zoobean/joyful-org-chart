@@ -147,6 +147,8 @@ export const teams = [
 //                    spine (and its line-drawing pill-row) without the visible
 //                    name badge — for sub-columns already named by their
 //                    head's own card.
+//   • `belowExecRow` — on a TOP-LEVEL `{ team }` column, start it one row down
+//                    from the rest, for a CEO report who is not on the exec team.
 export const layout = {
   ceo: 'felix-lloyd',
   columns: [

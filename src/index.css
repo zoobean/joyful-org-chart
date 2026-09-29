@@ -4,6 +4,10 @@
   /* For connectors that belong to no department — the CEO's own stem.
      Distinct from --oc-line, which is Product's colour too. */
   --oc-line-neutral: #d4d4cc;
+  /* One row down on the exec level: from an exec card's top to its first
+     report's top (card, then the team pill's row). A column that starts a row
+     down lines up with the exec teams' first reports. */
+  --oc-row-step: 87px;
   --oc-line-weight: 2px;
   --oc-elbow-radius: 7px;
 
