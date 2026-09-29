@@ -466,7 +466,12 @@ const OrgChart = forwardRef(function OrgChart(_props, ref) {
               col.group ? (
                 <Group key={col.group.leader} group={col.group} register={register} />
               ) : (
-                <TeamColumn key={col.team} team={getTeam(col.team)} register={register} />
+                <TeamColumn
+                  key={col.team}
+                  team={getTeam(col.team)}
+                  showLabel={col.showLabel}
+                  register={register}
+                />
               )
             )}
           </div>

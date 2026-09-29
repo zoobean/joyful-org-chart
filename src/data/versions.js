@@ -180,6 +180,27 @@ function addGroupColumn(d, leaderId, reports) {
   col.group.columns.push({ reports, slim: true })
 }
 
+/** Removes whichever `{ reports }` column of a group holds `id`. */
+function dropGroupColumn(d, leaderId, id) {
+  const col = d.layout.columns.find((c) => c.group?.leader === leaderId)
+  if (!col) throw new Error(`dropGroupColumn: no group for "${leaderId}"`)
+  col.group.columns = col.group.columns.filter((c) => !c.reports?.includes(id))
+}
+
+/**
+ * Gives a person a TOP-LEVEL column of their own, reporting straight to the
+ * CEO. The CEO's reports are the layout's top-level columns, and a column needs
+ * a team head to hang from — so this adds a team for them, placed before
+ * `beforeLeaderId`'s group. `showLabel: false` keeps the head-to-reports spine
+ * without a name badge, for a column already named by its head's own title.
+ */
+function addTopLevelColumn(d, { teamId, name, headId, beforeLeaderId }) {
+  d.teams.push({ id: teamId, name, head: headId })
+  const i = d.layout.columns.findIndex((c) => c.group?.leader === beforeLeaderId)
+  if (i === -1) throw new Error(`addTopLevelColumn: no group for "${beforeLeaderId}"`)
+  d.layout.columns.splice(i, 0, { team: teamId, showLabel: false })
+}
+
 /** Replaces a group's sub-columns outright with the given lists of cards. */
 function setGroupColumns(d, leaderId, columns) {
   const col = d.layout.columns.find((c) => c.group?.leader === leaderId)
@@ -325,6 +346,30 @@ export const versions = [
         ['lauren-hantzes', 'tammy-mcintyre', 'emily-peterson', 'kelly-williams', 'stella-bromley'],
         ['cleo-joyce', 'elizabeth-ross'],
       ])
+      return d
+    },
+  },
+  {
+    id: 'v2',
+    name: 'Version 2',
+    // Version 1, except Jillian (and Joe beneath her) report straight to Felix
+    // instead of Lainey. Built ON Version 1 rather than copied from it, so
+    // Version 1's own definition is untouched — but it also means later edits
+    // to Version 1 flow through to this one.
+    build() {
+      const d = versions.find((v) => v.id === 'v1').build()
+
+      move(d, 'jillian-tweet', 'felix-lloyd')
+      dropGroupColumn(d, 'lainey-franks', 'jillian-tweet')
+
+      // Her own column, where the PAL column used to sit — between Lainey's
+      // group and Hopp's. She keeps PAL's blue, already in the palette.
+      addTopLevelColumn(d, {
+        teamId: 'pal',
+        name: 'PAL',
+        headId: 'jillian-tweet',
+        beforeLeaderId: 'dave-hopp',
+      })
       return d
     },
   },
