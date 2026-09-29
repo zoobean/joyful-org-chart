@@ -368,9 +368,11 @@ export const versions = [
       move(d, 'jillian-tweet', 'felix-lloyd')
       dropGroupColumn(d, 'lainey-franks', 'jillian-tweet')
 
-      // Her own column at the far right, after Engineering. She keeps PAL's
-      // blue, already in the palette.
-      addTopLevelColumn(d, { teamId: 'pal', name: 'PAL', headId: 'jillian-tweet' })
+      // Her own column at the far right, after Engineering. It uses the
+      // neutral palette entry, so she and Joe match the CEO rather than
+      // carrying PAL's blue. (Not the 'pal' team itself: the current chart's
+      // PAL column still uses that one.)
+      addTopLevelColumn(d, { teamId: 'neutral', name: 'PAL', headId: 'jillian-tweet' })
       return d
     },
   },

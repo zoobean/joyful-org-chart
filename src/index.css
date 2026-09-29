@@ -89,7 +89,17 @@
    department's lines and boxes read as one color rather than three shades. */
 [data-team] {
   --oc-line: var(--oc-team-bg);
-  --oc-card-border: var(--oc-team-bg);
+  /* A department may state its own border; otherwise it is the pill color. */
+  --oc-card-border: var(--oc-team-border, var(--oc-team-bg));
+}
+
+/* Not a department: a column that reports straight to the CEO and so looks like
+   the CEO's own card rather than borrowing anyone's color. Lines are the CEO
+   bus's grey and borders are the CEO card's border. No --oc-team-fg is set, so
+   names fall back to the brand green, as the CEO's does. */
+[data-team='neutral'] {
+  --oc-team-bg: var(--oc-line-neutral);
+  --oc-team-border: #dcdcd6;
 }
 
 * {
