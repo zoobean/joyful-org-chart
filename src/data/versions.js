@@ -364,27 +364,20 @@ export const versions = [
   {
     id: 'v2',
     name: 'Version 2',
-    // Version 1, except Jillian (and Joe beneath her) report straight to Felix
-    // instead of Lainey. Built ON Version 1 rather than copied from it, so
-    // Version 1's own definition is untouched — but it also means later edits
-    // to Version 1 flow through to this one.
+    // Version 1, except Jillian (and Joe beneath her) report to Hopp instead of
+    // Lainey. Built ON Version 1 rather than copied from it, so Version 1's own
+    // definition is untouched — but it also means later edits to Version 1 flow
+    // through to this one.
     build() {
       const d = versions.find((v) => v.id === 'v1').build()
 
-      move(d, 'jillian-tweet', 'felix-lloyd')
-      dropGroupColumn(d, 'lainey-franks', 'jillian-tweet')
+      move(d, 'jillian-tweet', 'dave-hopp')
 
-      // Her own column at the far right, after Engineering, starting a row
-      // down: she reports to Felix but is not on the exec team. It uses the
-      // neutral palette entry, so she and Joe match the CEO rather than
-      // carrying PAL's blue. (Not the 'pal' team itself: the current chart's
-      // PAL column still uses that one.)
-      addTopLevelColumn(d, {
-        teamId: 'neutral',
-        name: 'PALS',
-        headId: 'jillian-tweet',
-        belowExecRow: true,
-      })
+      // Out of Lainey's group, and into Hopp's first column after Lindsey. In
+      // Hopp's group she takes Sales' colors, and Joe comes along beneath her
+      // because he is nested under her in the tree.
+      dropGroupColumn(d, 'lainey-franks', 'jillian-tweet')
+      renderAfter(d, 'dave-hopp', 'lindsey-hill', 'jillian-tweet')
       return d
     },
   },
