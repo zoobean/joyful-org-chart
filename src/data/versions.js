@@ -325,6 +325,7 @@ export const versions = [
       dropTeam(d, 'pal')
 
       retitle(d, 'alex-burnsides', 'Sales Enablement Lead')
+      retitle(d, 'lilly-sundell-thomas', 'Marketing Manager, Product & Engagement')
 
       // Brittinee's seat is unfilled. Paktra's is gone with no replacement.
       replacePerson(d, 'brittinee-phillips', {
