@@ -169,6 +169,17 @@ function regroup(d, teamId, columns) {
   }
 }
 
+/**
+ * Appends a `{ reports }` column to a group. Use this rather than an `extras`
+ * slot for anyone who has reports of their own: `extras` renders a bare card
+ * and would silently drop them.
+ */
+function addGroupColumn(d, leaderId, reports) {
+  const col = d.layout.columns.find((c) => c.group?.leader === leaderId)
+  if (!col) throw new Error(`addGroupColumn: no group for "${leaderId}"`)
+  col.group.columns.push({ reports, slim: true })
+}
+
 /** Replaces a group's sub-columns outright with the given lists of cards. */
 function setGroupColumns(d, leaderId, columns) {
   const col = d.layout.columns.find((c) => c.group?.leader === leaderId)
@@ -205,7 +216,7 @@ export const versions = [
 
       // Jillian takes the PAL book as a sales manager under Hopp, with Joe
       // now reporting to her rather than alongside her.
-      move(d, 'jillian-tweet', 'dave-hopp')
+      move(d, 'jillian-tweet', 'lainey-franks')
       retitle(d, 'jillian-tweet', 'National Sales Manager, PALS')
       move(d, 'joe-barrette', 'jillian-tweet')
 
@@ -270,8 +281,12 @@ export const versions = [
         ['jessica-molloy', 'Associate BDR'],
       ])
 
+      // Jillian reports to Lainey, so she renders in Lainey's group instead —
+      // in a column of her own, which carries Joe along beneath her.
+      addGroupColumn(d, 'lainey-franks', ['jillian-tweet'])
+
       setGroupColumns(d, 'dave-hopp', [
-        ['coley-martin', 'don-giacomini', 'lindsey-hill', 'jillian-tweet'],
+        ['coley-martin', 'don-giacomini', 'lindsey-hill'],
         ['lauren-brami', 'michael-kideckel'],
       ])
 
@@ -281,17 +296,13 @@ export const versions = [
 
       retitle(d, 'alex-burnsides', 'Sales Enablement Lead')
 
-      // Both marketing seats are unfilled, each keeping its place in the list.
+      // Brittinee's seat is unfilled. Paktra's is gone with no replacement.
       replacePerson(d, 'brittinee-phillips', {
         id: 'tbd-mm-community-social',
         name: 'TBD',
         title: 'Marketing Manager, Community & Social',
       })
-      replacePerson(d, 'paktra-lynch', {
-        id: 'tbd-amm-events',
-        name: 'TBD',
-        title: 'Associate Marketing Manager, Events',
-      })
+      remove(d, 'paktra-lynch')
 
       // An unfilled finance seat under Akshat.
       addReport(d, 'akshat-khandelwal', {
@@ -305,7 +316,7 @@ export const versions = [
       addReport(d, 'tyler-ewing', {
         id: 'tbd-forward-deployed-ai-engineer',
         name: 'TBD',
-        title: 'Forward Deployed AI Engineer',
+        title: 'Software Engineer, Internal AI',
       })
 
       // Client Success splits into two columns like Sales: the school success
