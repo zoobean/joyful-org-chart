@@ -341,13 +341,16 @@ export const versions = [
         title: 'Financial Controller',
       })
 
-      // Two new engineering seats, unfilled, following the TBD convention.
+      // Three open engineering seats, following the TBD convention. Rachel's
+      // role is removed outright, with no replacement in her slot.
       addReport(d, 'tyler-ewing', { id: 'tbd-associate-developer', name: 'TBD', title: 'Associate Developer' })
       addReport(d, 'tyler-ewing', {
         id: 'tbd-forward-deployed-ai-engineer',
         name: 'TBD',
         title: 'Software Engineer, Internal AI',
       })
+      addReport(d, 'tyler-ewing', { id: 'tbd-full-stack-developer', name: 'TBD', title: 'Full Stack Developer' })
+      remove(d, 'rachel-mcgrane')
 
       // Client Success splits into two columns like Sales: the school success
       // people, then the two teams that moved in above.
