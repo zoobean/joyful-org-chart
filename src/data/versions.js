@@ -190,15 +190,21 @@ function dropGroupColumn(d, leaderId, id) {
 /**
  * Gives a person a TOP-LEVEL column of their own, reporting straight to the
  * CEO. The CEO's reports are the layout's top-level columns, and a column needs
- * a team head to hang from — so this adds a team for them, placed before
- * `beforeLeaderId`'s group. `showLabel: false` keeps the head-to-reports spine
- * without a name badge, for a column already named by its head's own title.
+ * a team head to hang from — so this adds a team for them. It goes before
+ * `beforeLeaderId`'s group when one is given, and at the far right otherwise.
+ * `showLabel: false` keeps the head-to-reports spine without a name badge, for
+ * a column already named by its head's own title.
  */
 function addTopLevelColumn(d, { teamId, name, headId, beforeLeaderId }) {
   d.teams.push({ id: teamId, name, head: headId })
+  const column = { team: teamId, showLabel: false }
+  if (!beforeLeaderId) {
+    d.layout.columns.push(column)
+    return
+  }
   const i = d.layout.columns.findIndex((c) => c.group?.leader === beforeLeaderId)
   if (i === -1) throw new Error(`addTopLevelColumn: no group for "${beforeLeaderId}"`)
-  d.layout.columns.splice(i, 0, { team: teamId, showLabel: false })
+  d.layout.columns.splice(i, 0, column)
 }
 
 /** Replaces a group's sub-columns outright with the given lists of cards. */
@@ -362,14 +368,9 @@ export const versions = [
       move(d, 'jillian-tweet', 'felix-lloyd')
       dropGroupColumn(d, 'lainey-franks', 'jillian-tweet')
 
-      // Her own column, where the PAL column used to sit — between Lainey's
-      // group and Hopp's. She keeps PAL's blue, already in the palette.
-      addTopLevelColumn(d, {
-        teamId: 'pal',
-        name: 'PAL',
-        headId: 'jillian-tweet',
-        beforeLeaderId: 'dave-hopp',
-      })
+      // Her own column at the far right, after Engineering. She keeps PAL's
+      // blue, already in the palette.
+      addTopLevelColumn(d, { teamId: 'pal', name: 'PAL', headId: 'jillian-tweet' })
       return d
     },
   },
