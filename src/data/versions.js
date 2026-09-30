@@ -218,6 +218,18 @@ function setGroupColumns(d, leaderId, columns) {
 }
 
 /**
+ * Renders `id` at the TOP of a group leader's first `{ reports }` column. A
+ * group's card order comes from its layout lists rather than the tree, so this
+ * states the placement outright.
+ */
+function renderFirst(d, leaderId, id) {
+  const group = d.layout.columns.find((c) => c.group?.leader === leaderId)?.group
+  const col = group?.columns.find((c) => c.reports)
+  if (!col) throw new Error(`renderFirst: no { reports } column in "${leaderId}"'s group`)
+  col.reports.unshift(id)
+}
+
+/**
  * Renders `id` inside a group leader's `{ reports }` column, directly after
  * `afterId`. Without this a newly re-parented card never appears: a group's
  * columns list their cards explicitly.
@@ -374,11 +386,11 @@ export const versions = [
 
       move(d, 'jillian-tweet', 'dave-hopp')
 
-      // Out of Lainey's group, and into Hopp's first column after Lindsey. In
+      // Out of Lainey's group, and to the top of Hopp's first column. In
       // Hopp's group she takes Sales' colors, and Joe comes along beneath her
       // because he is nested under her in the tree.
       dropGroupColumn(d, 'lainey-franks', 'jillian-tweet')
-      renderAfter(d, 'dave-hopp', 'lindsey-hill', 'jillian-tweet')
+      renderFirst(d, 'dave-hopp', 'jillian-tweet')
       return d
     },
   },
