@@ -59,6 +59,27 @@ function moveToTop(d, id, managerId) {
   manager.reports.unshift(person)
 }
 
+/**
+ * Puts a manager's reports in exactly this order. Card order follows the tree,
+ * so this states it outright. It refuses to run unless `ids` names precisely
+ * the manager's current reports — nobody left out, nobody extra — so a person
+ * omitted from a restructure fails loudly here rather than silently vanishing
+ * from the chart.
+ */
+function orderReports(d, managerId, ids) {
+  const manager = find(d.org, managerId)
+  if (!manager) throw new Error(`orderReports: no manager "${managerId}"`)
+  const have = manager.reports.map((r) => r.id)
+  const missing = have.filter((id) => !ids.includes(id))
+  const extra = ids.filter((id) => !have.includes(id))
+  if (missing.length || extra.length || ids.length !== new Set(ids).size) {
+    throw new Error(
+      `orderReports("${managerId}"): left out [${missing}] / not a report [${extra}]`
+    )
+  }
+  manager.reports = ids.map((id) => manager.reports.find((r) => r.id === id))
+}
+
 /** Swaps two of a manager's reports around — card order follows the tree. */
 function swapReports(d, managerId, idA, idB) {
   const manager = find(d.org, managerId)
@@ -354,16 +375,31 @@ export const versions = [
         title: 'Financial Controller',
       })
 
-      // Three open engineering seats, following the TBD convention. Rachel's
-      // role is removed outright, with no replacement in her slot.
-      addReport(d, 'tyler-ewing', { id: 'tbd-associate-developer', name: 'TBD', title: 'Associate Developer' })
-      addReport(d, 'tyler-ewing', {
-        id: 'tbd-forward-deployed-ai-engineer',
-        name: 'TBD',
-        title: 'Software Engineer, Internal AI',
-      })
-      addReport(d, 'tyler-ewing', { id: 'tbd-full-stack-developer', name: 'TBD', title: 'Full Stack Developer' })
+      // ── Engineering ──────────────────────────────────────────────────────
+      // Stated as its finished shape. Everyone keeps their existing title; the
+      // two open seats follow the TBD convention. Rachel's role is removed
+      // outright. orderReports checks each list is complete, so anyone left
+      // out of this outline fails here instead of dropping off the chart.
       remove(d, 'rachel-mcgrane')
+
+      move(d, 'alejandro-zaizar', 'antonio-chavez')
+      addReport(d, 'antonio-chavez', { id: 'tbd-full-stack-developer', name: 'TBD', title: 'Full Stack Developer' })
+
+      move(d, 'armando-duran', 'mike-berse')
+      move(d, 'josh-joson', 'mike-berse')
+
+      addReport(d, 'jade-ornelas', { id: 'tbd-junior-developer', name: 'TBD', title: 'Junior Developer' })
+
+      orderReports(d, 'tyler-ewing', [
+        'antonio-chavez',
+        'mike-berse',
+        'jade-ornelas',
+        'josh-oiknine',
+        'vincent-mendiola',
+      ])
+      orderReports(d, 'antonio-chavez', ['alejandro-zaizar', 'tbd-full-stack-developer'])
+      orderReports(d, 'mike-berse', ['armando-duran', 'josh-joson'])
+      orderReports(d, 'jade-ornelas', ['tbd-junior-developer'])
 
       // Client Success splits into two columns like Sales: the school success
       // people, then the two teams that moved in above.
