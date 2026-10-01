@@ -120,6 +120,23 @@ function matchTitle(d, sourceId, ids) {
   ids.forEach((id) => retitle(d, id, source.title))
 }
 
+/**
+ * Blanks the NAME of everyone under `managerId`, at any depth, leaving the
+ * manager's own name and every title, id and reporting line as they were. The
+ * cards become role-only. Walks the tree rather than taking a list of people, so
+ * it follows whatever structure the version has built up to this point.
+ */
+function blankNamesUnder(d, managerId) {
+  const manager = find(d.org, managerId)
+  if (!manager) throw new Error(`blankNamesUnder: no manager "${managerId}"`)
+  ;(function blank(node) {
+    node.reports.forEach((r) => {
+      r.name = ''
+      blank(r)
+    })
+  })(manager)
+}
+
 /** Drops a person AND their remaining reports. Move anyone who stays first. */
 const remove = (d, id) => void detach(d, id)
 
@@ -413,20 +430,16 @@ export const versions = [
   {
     id: 'v2',
     name: 'Version 2',
-    // Version 1, except Jillian (and Joe beneath her) report to Hopp instead of
-    // Lainey. Built ON Version 1 rather than copied from it, so Version 1's own
-    // definition is untouched — but it also means later edits to Version 1 flow
-    // through to this one.
+    // Version 1, except School Sales shows roles only: every name under Hopp is
+    // removed, with all the titles and the structure left exactly as they are.
+    // Jillian and Joe report to Lainey here, as in Version 1, so they are not
+    // part of School Sales and keep their names. Built ON Version 1 rather than
+    // copied from it, so Version 1's own definition is untouched — but later
+    // edits to Version 1 flow through to this one.
     build() {
       const d = versions.find((v) => v.id === 'v1').build()
 
-      move(d, 'jillian-tweet', 'dave-hopp')
-
-      // Out of Lainey's group, and to the top of Hopp's first column. In
-      // Hopp's group she takes Sales' colors, and Joe comes along beneath her
-      // because he is nested under her in the tree.
-      dropGroupColumn(d, 'lainey-franks', 'jillian-tweet')
-      renderFirst(d, 'dave-hopp', 'jillian-tweet')
+      blankNamesUnder(d, 'dave-hopp')
       return d
     },
   },

@@ -4,12 +4,14 @@ import './PersonCard.css'
 // One normalized card style for everyone — no emphasis variants, left-aligned.
 // Open positions are named "TBD" in the data; their card gets a dotted border
 // instead of solid, to read as an open req rather than a filled seat.
+// A person with an empty name shows only their title — a role-only card, which
+// is not the same thing as an open req (those are named "TBD").
 // Forwards its ref so the connector layer can measure anchor cards by id.
 const PersonCard = forwardRef(function PersonCard({ person }, ref) {
   const isOpenReq = person.name === 'TBD'
   return (
     <div className={`oc-card${isOpenReq ? ' oc-card--open' : ''}`} ref={ref}>
-      <div className="oc-card__name">{person.name}</div>
+      {person.name && <div className="oc-card__name">{person.name}</div>}
       <div className="oc-card__title">{person.title}</div>
     </div>
   )
