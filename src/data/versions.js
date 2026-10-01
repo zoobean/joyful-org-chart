@@ -103,6 +103,32 @@ function assignTeam(d, managerId, people) {
   })
 }
 
+/** Changes the name shown on a card. The id, title and reporting line stay. */
+function rename(d, id, name) {
+  const person = find(d.org, id)
+  if (!person) throw new Error(`rename: no person "${id}"`)
+  person.name = name
+}
+
+/**
+ * Replaces one title with another wherever it appears — an EXACT match, so
+ * "Account Executive" never touches "Principal Account Executive". Throws if
+ * nothing carries the title, since a swap that matches no one is almost
+ * certainly working from a stale picture of the chart.
+ */
+function retitleAll(d, from, to) {
+  let n = 0
+  ;(function walk(node) {
+    if (node.title === from) {
+      node.title = to
+      n += 1
+    }
+    node.reports.forEach(walk)
+  })(d.org)
+  if (!n) throw new Error(`retitleAll: nobody has the title "${from}"`)
+  return n
+}
+
 function retitle(d, id, title) {
   const person = find(d.org, id)
   if (!person) throw new Error(`retitle: no person "${id}"`)
@@ -337,9 +363,16 @@ export const versions = [
       retitle(d, 'coley-martin', 'Regional Sales Manager')
       retitle(d, 'don-giacomini', 'Regional Sales Manager')
 
+      // Bryana and Don are both being considered for the two seats below — a
+      // Regional Sales Manager and an Account Executive — and which of them takes
+      // which is not settled, so both cards carry the shared name. The ids stay
+      // as they were.
+      rename(d, 'don-giacomini', 'Bryana/Don')
+      rename(d, 'bryana-snyder', 'Bryana/Don')
+
       assignTeam(d, 'coley-martin', [
         ['chelsea-mccoy', 'Senior Account Executive'],
-        ['bryana-snyder', 'Senior Account Executive'],
+        ['bryana-snyder', 'Account Executives'],
         ['jessica-fulton', 'Account Executive'],
       ])
       assignTeam(d, 'don-giacomini', [
@@ -444,6 +477,13 @@ export const versions = [
       const d = versions.find((v) => v.id === 'v1').build()
 
       blankNamesUnder(d, 'dave-hopp')
+
+      // Plain titles: no seniority or qualifier. Exact-match swaps, applied
+      // chart-wide, so Principal Account Executive and the PALS titles stay.
+      retitleAll(d, 'Senior Account Executive', 'Account Executive')
+      retitleAll(d, 'Associate Account Executive', 'Account Executive')
+      retitleAll(d, 'Strategic BDR', 'BDR')
+      retitleAll(d, 'Associate BDR', 'BDR')
       return d
     },
   },
