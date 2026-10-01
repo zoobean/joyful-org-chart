@@ -372,7 +372,7 @@ export const versions = [
 
       assignTeam(d, 'coley-martin', [
         ['chelsea-mccoy', 'Senior Account Executive'],
-        ['bryana-snyder', 'Account Executives'],
+        ['bryana-snyder', 'Account Executive'],
         ['jessica-fulton', 'Account Executive'],
       ])
       assignTeam(d, 'don-giacomini', [
