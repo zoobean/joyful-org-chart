@@ -111,6 +111,28 @@ function rename(d, id, name) {
 }
 
 /**
+ * Swaps one WORD for another inside every title, keeping a leading capital. Whole
+ * words only, so replacing "Developer" never touches "Development". Throws if no
+ * title contains it, since a swap that matches nothing is almost certainly
+ * working from a stale picture of the chart.
+ */
+function replaceWordInTitles(d, from, to) {
+  const re = new RegExp(`\\b${from}\\b`, 'gi')
+  const cased = (match) =>
+    (match[0] === match[0].toUpperCase() ? to[0].toUpperCase() : to[0].toLowerCase()) + to.slice(1)
+  let n = 0
+  ;(function walk(node) {
+    node.title = node.title.replace(re, (match) => {
+      n += 1
+      return cased(match)
+    })
+    node.reports.forEach(walk)
+  })(d.org)
+  if (!n) throw new Error(`replaceWordInTitles: no title contains "${from}"`)
+  return n
+}
+
+/**
  * Replaces one title with another wherever it appears — an EXACT match, so
  * "Account Executive" never touches "Principal Account Executive". Throws if
  * nothing carries the title, since a swap that matches no one is almost
@@ -435,13 +457,13 @@ export const versions = [
       move(d, 'vincent-mendiola', 'antonio-chavez')
 
       // Mike has no reports of his own: Armando and Josh J. report to a new,
-      // unfilled Senior Developer, who reports to Tyler. (Vincent also holds
-      // the title Senior Developer; that is a separate, existing person.)
-      addReport(d, 'tyler-ewing', { id: 'tbd-senior-developer', name: 'TBD', title: 'Senior Developer' })
+      // unfilled Senior Engineer, who reports to Tyler. (Vincent also holds
+      // the title Senior Engineer; that is a separate, existing person.)
+      addReport(d, 'tyler-ewing', { id: 'tbd-senior-developer', name: 'TBD', title: 'Senior Engineer' })
       move(d, 'armando-duran', 'tbd-senior-developer')
       move(d, 'josh-joson', 'tbd-senior-developer')
 
-      addReport(d, 'jade-ornelas', { id: 'tbd-junior-developer', name: 'TBD', title: 'Junior Developer' })
+      addReport(d, 'jade-ornelas', { id: 'tbd-junior-developer', name: 'TBD', title: 'Junior Engineer' })
 
       orderReports(d, 'tyler-ewing', [
         'antonio-chavez',
@@ -461,6 +483,11 @@ export const versions = [
         ['lauren-hantzes', 'tammy-mcintyre', 'emily-peterson', 'kelly-williams', 'stella-bromley'],
         ['cleo-joyce', 'elizabeth-ross'],
       ])
+      // Developer is Engineer in this version, wherever it appears. This is what
+      // reaches the base-data titles (Vincent, Armando), which are not edited
+      // directly because the current chart keeps them.
+      replaceWordInTitles(d, 'Developer', 'Engineer')
+
       return d
     },
   },
