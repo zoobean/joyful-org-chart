@@ -461,25 +461,15 @@ export const versions = [
       move(d, 'vincent-mendiola', 'antonio-chavez')
       addReport(d, 'antonio-chavez', { id: 'tbd-senior-engineer-antonio', name: 'TBD', title: 'Senior Engineer' })
 
-      // Mike has no reports of his own: Armando and Josh J. report to a new,
-      // unfilled Senior Engineer, who reports to Tyler. (Vincent also holds
-      // the title Senior Engineer; that is a separate, existing person.)
-      addReport(d, 'tyler-ewing', { id: 'tbd-senior-developer', name: 'TBD', title: 'Senior Engineer' })
-      move(d, 'armando-duran', 'tbd-senior-developer')
-      move(d, 'josh-joson', 'tbd-senior-developer')
+      // Armando and Josh J. report to Mike directly.
+      move(d, 'armando-duran', 'mike-berse')
+      move(d, 'josh-joson', 'mike-berse')
 
       addReport(d, 'jade-ornelas', { id: 'tbd-junior-developer', name: 'TBD', title: 'Junior Engineer' })
 
-      orderReports(d, 'tyler-ewing', [
-        'antonio-chavez',
-        'mike-berse',
-        'tbd-senior-developer',
-        'jade-ornelas',
-        'josh-oiknine',
-      ])
+      orderReports(d, 'tyler-ewing', ['antonio-chavez', 'mike-berse', 'jade-ornelas', 'josh-oiknine'])
       orderReports(d, 'antonio-chavez', ['alejandro-zaizar', 'vincent-mendiola', 'tbd-senior-engineer-antonio'])
-      orderReports(d, 'mike-berse', [])
-      orderReports(d, 'tbd-senior-developer', ['armando-duran', 'josh-joson'])
+      orderReports(d, 'mike-berse', ['armando-duran', 'josh-joson'])
       orderReports(d, 'jade-ornelas', ['tbd-junior-developer'])
 
       // Client Success splits into two columns like Sales: the school success
