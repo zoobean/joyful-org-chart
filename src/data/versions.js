@@ -459,6 +459,7 @@ export const versions = [
 
       move(d, 'alejandro-zaizar', 'antonio-chavez')
       move(d, 'vincent-mendiola', 'antonio-chavez')
+      addReport(d, 'antonio-chavez', { id: 'tbd-senior-engineer-antonio', name: 'TBD', title: 'Senior Engineer' })
 
       // Mike has no reports of his own: Armando and Josh J. report to a new,
       // unfilled Senior Engineer, who reports to Tyler. (Vincent also holds
@@ -476,7 +477,7 @@ export const versions = [
         'jade-ornelas',
         'josh-oiknine',
       ])
-      orderReports(d, 'antonio-chavez', ['alejandro-zaizar', 'vincent-mendiola'])
+      orderReports(d, 'antonio-chavez', ['alejandro-zaizar', 'vincent-mendiola', 'tbd-senior-engineer-antonio'])
       orderReports(d, 'mike-berse', [])
       orderReports(d, 'tbd-senior-developer', ['armando-duran', 'josh-joson'])
       orderReports(d, 'jade-ornelas', ['tbd-junior-developer'])
