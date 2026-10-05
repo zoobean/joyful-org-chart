@@ -397,10 +397,10 @@ export const versions = [
         ['bryana-snyder', 'Account Executive'],
         ['jessica-fulton', 'Account Executive'],
       ])
-      // One more Account Executive for Coley, with no name. Deliberately NOT the
-      // TBD convention: no TBD roles in sales, so it is a role-only card (title
-      // alone, solid border) rather than a dotted open-seat one.
-      addReport(d, 'coley-martin', { id: 'role-account-executive-coley', name: '', title: 'Account Executive' })
+      // One more Account Executive for Coley: an open seat, so it follows the TBD
+      // convention (a dotted card). Version 2 blanks every name under Hopp after
+      // this runs, so it shows there as a plain role instead.
+      addReport(d, 'coley-martin', { id: 'tbd-account-executive-coley', name: 'TBD', title: 'Account Executive' })
       assignTeam(d, 'don-giacomini', [
         ['becca-traxler', 'Account Executive'],
         ['beth-halaz', 'Account Executive'],
