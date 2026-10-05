@@ -397,6 +397,10 @@ export const versions = [
         ['bryana-snyder', 'Account Executive'],
         ['jessica-fulton', 'Account Executive'],
       ])
+      // One more Account Executive for Coley, with no name. Deliberately NOT the
+      // TBD convention: no TBD roles in sales, so it is a role-only card (title
+      // alone, solid border) rather than a dotted open-seat one.
+      addReport(d, 'coley-martin', { id: 'role-account-executive-coley', name: '', title: 'Account Executive' })
       assignTeam(d, 'don-giacomini', [
         ['becca-traxler', 'Account Executive'],
         ['beth-halaz', 'Account Executive'],
