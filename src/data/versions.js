@@ -457,19 +457,25 @@ export const versions = [
       // out of this outline fails here instead of dropping off the chart.
       remove(d, 'rachel-mcgrane')
 
+      // Antonio is an Engineering Manager with the whole engineering team under
+      // him. The open seat is listed last, as with the other open seats.
+      retitle(d, 'antonio-chavez', 'Engineering Manager')
       move(d, 'alejandro-zaizar', 'antonio-chavez')
       move(d, 'vincent-mendiola', 'antonio-chavez')
+      move(d, 'armando-duran', 'antonio-chavez')
+      move(d, 'josh-joson', 'antonio-chavez')
       addReport(d, 'antonio-chavez', { id: 'tbd-senior-engineer-antonio', name: 'TBD', title: 'Senior Engineer' })
-
-      // Armando and Josh J. report to Mike directly.
-      move(d, 'armando-duran', 'mike-berse')
-      move(d, 'josh-joson', 'mike-berse')
 
       addReport(d, 'jade-ornelas', { id: 'tbd-junior-developer', name: 'TBD', title: 'Junior Engineer' })
 
       orderReports(d, 'tyler-ewing', ['antonio-chavez', 'mike-berse', 'jade-ornelas', 'josh-oiknine'])
-      orderReports(d, 'antonio-chavez', ['alejandro-zaizar', 'vincent-mendiola', 'tbd-senior-engineer-antonio'])
-      orderReports(d, 'mike-berse', ['armando-duran', 'josh-joson'])
+      orderReports(d, 'antonio-chavez', [
+        'alejandro-zaizar',
+        'vincent-mendiola',
+        'armando-duran',
+        'josh-joson',
+        'tbd-senior-engineer-antonio',
+      ])
       orderReports(d, 'jade-ornelas', ['tbd-junior-developer'])
 
       // Client Success splits into two columns like Sales: the school success
