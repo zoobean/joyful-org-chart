@@ -408,7 +408,7 @@ export const versions = [
       ])
       assignTeam(d, 'jillian-tweet', [['joe-barrette', 'Account Executive, PALS']])
       assignTeam(d, 'lauren-brami', [
-        ['haven-gotham', 'Strategic BDR'],
+        ['haven-gotham', 'Senior BDR'],
         ['andrea-mullon', 'BDR'],
         ['esmy-clavel', 'BDR'],
         ['steven-dimiceli', 'BDR'],
@@ -510,7 +510,7 @@ export const versions = [
       // chart-wide, so Principal Account Executive and the PALS titles stay.
       retitleAll(d, 'Senior Account Executive', 'Account Executive')
       retitleAll(d, 'Associate Account Executive', 'Account Executive')
-      retitleAll(d, 'Strategic BDR', 'BDR')
+      retitleAll(d, 'Senior BDR', 'BDR')
       retitleAll(d, 'Associate BDR', 'BDR')
       return d
     },
