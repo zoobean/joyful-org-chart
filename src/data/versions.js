@@ -296,6 +296,16 @@ function addTopLevelColumn(d, { teamId, name, headId, beforeLeaderId, belowExecR
   d.layout.columns.splice(i, 0, column)
 }
 
+/**
+ * Renames a team's pill. The id stays put: the department colors and the
+ * layout both key off it, so only the visible name changes.
+ */
+function renameTeam(d, teamId, name) {
+  const team = d.teams.find((t) => t.id === teamId)
+  if (!team) throw new Error(`renameTeam: no team "${teamId}"`)
+  team.name = name
+}
+
 /** Replaces a group's sub-columns outright with the given lists of cards. */
 function setGroupColumns(d, leaderId, columns) {
   const col = d.layout.columns.find((c) => c.group?.leader === leaderId)
@@ -484,6 +494,10 @@ export const versions = [
         ['lauren-hantzes', 'tammy-mcintyre', 'emily-peterson', 'kelly-williams', 'stella-bromley'],
         ['cleo-joyce', 'elizabeth-ross'],
       ])
+
+      // Lainey's department goes by a new name; the people and colors don't change.
+      renameTeam(d, 'business-optimization', 'Growth & Operations')
+
       // Developer is Engineer in this version, wherever it appears. This is what
       // reaches the base-data titles (Vincent, Armando), which are not edited
       // directly because the current chart keeps them.
