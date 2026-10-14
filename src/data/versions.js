@@ -365,19 +365,12 @@ export const versions = [
       // carries Camille, Jenny and Simon with her — they are her subtree.
       move(d, 'elizabeth-ross', 'shaun-conway')
 
-      // Two unfilled product seats, following the chart's TBD convention.
-      // Brooke's is a replacement, so it keeps her place in Kelly's list.
-      replacePerson(d, 'brooke-keene', {
-        id: 'tbd-pm-delivery',
-        name: 'TBD',
-        title: 'Senior Product Manager, Delivery',
-      })
-      // Jenny fills the APM seat, so it is hers rather than a TBD. Simon
-      // stays in Product Support, moving up to Elizabeth.
+      // Brooke's role is gone with no replacement. Simon stays in Product
+      // Support, moving up to Elizabeth, and Jenny reports to Kelly.
+      remove(d, 'brooke-keene')
       move(d, 'simon-desalvo', 'elizabeth-ross')
       move(d, 'jenny-plummer', 'kelly-hiser')
       retitle(d, 'jenny-plummer', 'Product Operations Lead')
-      swapReports(d, 'kelly-hiser', 'jenny-plummer', 'tbd-pm-delivery')
 
       // Lindsey joins Sales under Hopp himself. She rendered beside Business
       // operations as a card whose reporting line pointed at Lainey, so that
@@ -407,10 +400,6 @@ export const versions = [
         ['bryana-snyder', 'Account Executive'],
         ['jessica-fulton', 'Account Executive'],
       ])
-      // One more Account Executive for Coley: an open seat, so it follows the TBD
-      // convention (a dotted card). Version 2 blanks every name under Hopp after
-      // this runs, so it shows there as a plain role instead.
-      addReport(d, 'coley-martin', { id: 'tbd-account-executive-coley', name: 'TBD', title: 'Account Executive' })
       assignTeam(d, 'don-giacomini', [
         ['becca-traxler', 'Account Executive'],
         ['beth-halaz', 'Account Executive'],
@@ -445,48 +434,27 @@ export const versions = [
 
       retitle(d, 'lilly-sundell-thomas', 'Marketing Manager, Product & Engagement')
 
-      // Brittinee's seat is unfilled. Paktra's is gone with no replacement.
-      replacePerson(d, 'brittinee-phillips', {
-        id: 'tbd-mm-community-social',
-        name: 'TBD',
-        title: 'Marketing Manager, Community & Social',
-      })
+      // Brittinee's and Paktra's roles are gone with no replacements.
+      remove(d, 'brittinee-phillips')
       remove(d, 'paktra-lynch')
 
-      // An unfilled finance seat under Akshat.
-      addReport(d, 'akshat-khandelwal', {
-        id: 'tbd-financial-controller',
-        name: 'TBD',
-        title: 'Financial Controller',
-      })
-
       // ── Engineering ──────────────────────────────────────────────────────
-      // Stated as its finished shape. Everyone keeps their existing title; the
-      // open seats follow the TBD convention. Rachel's role is removed
-      // outright. orderReports checks each list is complete, so anyone left
-      // out of this outline fails here instead of dropping off the chart.
+      // Stated as its finished shape. Everyone keeps their existing title.
+      // Rachel's role is removed outright. orderReports checks each list is
+      // complete, so anyone left out of this outline fails here instead of
+      // dropping off the chart.
       remove(d, 'rachel-mcgrane')
 
       // Antonio is an Engineering Manager with the whole engineering team under
-      // him. The open seat is listed last, as with the other open seats.
+      // him.
       retitle(d, 'antonio-chavez', 'Engineering Manager')
       move(d, 'alejandro-zaizar', 'antonio-chavez')
       move(d, 'vincent-mendiola', 'antonio-chavez')
       move(d, 'armando-duran', 'antonio-chavez')
       move(d, 'josh-joson', 'antonio-chavez')
-      addReport(d, 'antonio-chavez', { id: 'tbd-senior-engineer-antonio', name: 'TBD', title: 'Senior Engineer' })
-
-      addReport(d, 'jade-ornelas', { id: 'tbd-junior-developer', name: 'TBD', title: 'Junior Engineer' })
 
       orderReports(d, 'tyler-ewing', ['antonio-chavez', 'mike-berse', 'jade-ornelas', 'josh-oiknine'])
-      orderReports(d, 'antonio-chavez', [
-        'alejandro-zaizar',
-        'vincent-mendiola',
-        'armando-duran',
-        'josh-joson',
-        'tbd-senior-engineer-antonio',
-      ])
-      orderReports(d, 'jade-ornelas', ['tbd-junior-developer'])
+      orderReports(d, 'antonio-chavez', ['alejandro-zaizar', 'vincent-mendiola', 'armando-duran', 'josh-joson'])
 
       // Client Success splits into two columns like Sales: the school success
       // people, then the two teams that moved in above.
