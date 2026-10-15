@@ -25,3 +25,12 @@
   font-size: 11px;
   margin-top: 1px;
 }
+
+/* When an open role is to be filled — the department's ink, italic, so it
+   reads as a status beside the title rather than as part of it. */
+.oc-card__note {
+  color: var(--oc-team-fg, var(--oc-green));
+  font-size: 10.5px;
+  font-style: italic;
+  margin-top: 3px;
+}

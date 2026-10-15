@@ -206,6 +206,19 @@ function addReport(d, managerId, person) {
   manager.reports.push({ ...person, reports: [] })
 }
 
+/**
+ * Adds an open role: a card named "TBD" (dotted), with a note on the card for
+ * when it is to be filled. The id is the stable handle for placing it.
+ */
+function addOpenRole(d, managerId, { id, title, note }) {
+  addReport(d, managerId, { id, name: 'TBD', title, note })
+}
+
+// When an open role is to be filled, as the card words it.
+const NOW = 'Immediate hire'
+const FEBRUARY = 'February hire'
+const LATER = '2027 hire once cashflow positive'
+
 // ── Layout helpers ─────────────────────────────────────────────────────────
 // Reporting line and visual placement are separate concerns (see org.js), so
 // a version that re-parents someone usually has to say where they now render.
@@ -372,6 +385,17 @@ export const versions = [
       move(d, 'jenny-plummer', 'kelly-hiser')
       retitle(d, 'jenny-plummer', 'Product Operations Lead')
 
+      addOpenRole(d, 'kelly-hiser', {
+        id: 'tbd-senior-product-manager',
+        title: 'Senior Product Manager',
+        note: NOW,
+      })
+      addOpenRole(d, 'elizabeth-ross', {
+        id: 'tbd-product-support-associate',
+        title: 'Product Support Associate',
+        note: LATER,
+      })
+
       // Lindsey joins Sales under Hopp himself. She rendered beside Business
       // operations as a card whose reporting line pointed at Lainey, so that
       // placement goes too — otherwise she would draw twice. Reporting to the
@@ -388,16 +412,11 @@ export const versions = [
       retitle(d, 'coley-martin', 'Regional Sales Manager')
       retitle(d, 'don-giacomini', 'Regional Sales Manager')
 
-      // Bryana and Don are both being considered for the two seats below — a
-      // Regional Sales Manager and an Account Executive — and which of them takes
-      // which is not settled, so both cards carry the shared name. The ids stay
-      // as they were.
-      rename(d, 'don-giacomini', 'Bryana/Don')
-      rename(d, 'bryana-snyder', 'Bryana/Don')
-
+      // Don takes the Regional Sales Manager seat and Bryana the Senior Account
+      // Executive one, so both go back to their own names.
       assignTeam(d, 'coley-martin', [
         ['chelsea-mccoy', 'Senior Account Executive'],
-        ['bryana-snyder', 'Account Executive'],
+        ['bryana-snyder', 'Senior Account Executive'],
         ['jessica-fulton', 'Account Executive'],
       ])
       assignTeam(d, 'don-giacomini', [
@@ -423,9 +442,22 @@ export const versions = [
       // in a column of her own, which carries Joe along beneath her.
       addGroupColumn(d, 'lainey-franks', ['jillian-tweet'])
 
+      // Open roles for Hopp's two groups: each is one card standing for several
+      // hires, and sits at the foot of its group's column.
+      addOpenRole(d, 'dave-hopp', {
+        id: 'tbd-account-executives',
+        title: 'Multiple Account Executives',
+        note: LATER,
+      })
+      addOpenRole(d, 'dave-hopp', {
+        id: 'tbd-business-development-reps',
+        title: 'Multiple Business Development Representatives',
+        note: LATER,
+      })
+
       setGroupColumns(d, 'dave-hopp', [
-        ['coley-martin', 'don-giacomini', 'lindsey-hill'],
-        ['lauren-brami', 'michael-kideckel'],
+        ['coley-martin', 'don-giacomini', 'lindsey-hill', 'tbd-account-executives'],
+        ['lauren-brami', 'michael-kideckel', 'tbd-business-development-reps'],
       ])
 
       // Only now is Ian childless and safe to drop without taking anyone with him.
@@ -437,6 +469,23 @@ export const versions = [
       // Brittinee's and Paktra's roles are gone with no replacements.
       remove(d, 'brittinee-phillips')
       remove(d, 'paktra-lynch')
+
+      addOpenRole(d, 'kelly-burke', {
+        id: 'tbd-marketing-manager-community-events',
+        title: 'Marketing Manager, Community & Events',
+        note: NOW,
+      })
+
+      addOpenRole(d, 'akshat-khandelwal', {
+        id: 'tbd-finance-controller',
+        title: 'Finance Controller',
+        note: NOW,
+      })
+      addOpenRole(d, 'akshat-khandelwal', {
+        id: 'tbd-junior-financial-operations',
+        title: 'Junior Financial Operations',
+        note: LATER,
+      })
 
       // ── Engineering ──────────────────────────────────────────────────────
       // Stated as its finished shape. Everyone keeps their existing title.
@@ -453,13 +502,57 @@ export const versions = [
       move(d, 'armando-duran', 'antonio-chavez')
       move(d, 'josh-joson', 'antonio-chavez')
 
-      orderReports(d, 'tyler-ewing', ['antonio-chavez', 'mike-berse', 'jade-ornelas', 'josh-oiknine'])
+      addOpenRole(d, 'tyler-ewing', {
+        id: 'tbd-associate-engineer',
+        title: 'Associate Engineer',
+        note: NOW,
+      })
+      addOpenRole(d, 'tyler-ewing', {
+        id: 'tbd-senior-engineer',
+        title: 'Senior Engineer',
+        note: LATER,
+      })
+
+      orderReports(d, 'tyler-ewing', [
+        'antonio-chavez',
+        'mike-berse',
+        'jade-ornelas',
+        'josh-oiknine',
+        'tbd-associate-engineer',
+        'tbd-senior-engineer',
+      ])
       orderReports(d, 'antonio-chavez', ['alejandro-zaizar', 'vincent-mendiola', 'armando-duran', 'josh-joson'])
 
+      // Emily's role is gone. Three School Success seats open under Shaun.
+      remove(d, 'emily-peterson')
+      addOpenRole(d, 'shaun-conway', {
+        id: 'tbd-associate-ssm',
+        title: 'Associate School Success Manager',
+        note: NOW,
+      })
+      addOpenRole(d, 'shaun-conway', {
+        id: 'tbd-ssm-february',
+        title: 'School Success Manager',
+        note: FEBRUARY,
+      })
+      addOpenRole(d, 'shaun-conway', {
+        id: 'tbd-ssm-2027',
+        title: 'School Success Manager',
+        note: LATER,
+      })
+
       // Client Success splits into two columns like Sales: the school success
-      // people, then the two teams that moved in above.
+      // people and their open seats, then the two teams that moved in above.
       regroup(d, 'school-client-success', [
-        ['lauren-hantzes', 'tammy-mcintyre', 'emily-peterson', 'kelly-williams', 'stella-bromley'],
+        [
+          'lauren-hantzes',
+          'tammy-mcintyre',
+          'kelly-williams',
+          'stella-bromley',
+          'tbd-associate-ssm',
+          'tbd-ssm-february',
+          'tbd-ssm-2027',
+        ],
         ['cleo-joyce', 'elizabeth-ross'],
       ])
 

@@ -6,6 +6,8 @@ import './PersonCard.css'
 // instead of solid, to read as an open req rather than a filled seat.
 // A person with an empty name shows only their title — a role-only card, which
 // is not the same thing as an open req (those are named "TBD").
+// An optional `note` shows beneath the title — for an open role, when it is to
+// be filled.
 // Forwards its ref so the connector layer can measure anchor cards by id.
 const PersonCard = forwardRef(function PersonCard({ person }, ref) {
   const isOpenReq = person.name === 'TBD'
@@ -13,6 +15,7 @@ const PersonCard = forwardRef(function PersonCard({ person }, ref) {
     <div className={`oc-card${isOpenReq ? ' oc-card--open' : ''}`} ref={ref}>
       {person.name && <div className="oc-card__name">{person.name}</div>}
       <div className="oc-card__title">{person.title}</div>
+      {person.note && <div className="oc-card__note">{person.note}</div>}
     </div>
   )
 })
