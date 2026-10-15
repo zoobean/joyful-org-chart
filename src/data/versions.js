@@ -214,10 +214,11 @@ function addOpenRole(d, managerId, { id, title, note }) {
   addReport(d, managerId, { id, name: 'TBD', title, note })
 }
 
-// When an open role is to be filled, as the card words it.
-const NOW = 'Immediate hire'
-const FEBRUARY = 'February hire'
-const LATER = '2027 hire once cashflow positive'
+// When an open role is to be filled, as the card words it, with the icon that
+// goes beside it (see NOTE_ICONS in PersonCard).
+const NOW = { text: 'Immediate hire', icon: 'bolt' }
+const FEBRUARY = { text: 'February hire', icon: 'calendar' }
+const LATER = { text: '2027 hire once cashflow positive', icon: 'hourglass' }
 
 // ── Layout helpers ─────────────────────────────────────────────────────────
 // Reporting line and visual placement are separate concerns (see org.js), so

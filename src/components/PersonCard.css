@@ -27,10 +27,21 @@
 }
 
 /* When an open role is to be filled — the department's ink, italic, so it
-   reads as a status beside the title rather than as part of it. */
+   reads as a status beside the title rather than as part of it. The icon sits
+   on the first line when the words wrap. */
 .oc-card__note {
+  display: flex;
+  align-items: flex-start;
+  gap: 4px;
   color: var(--oc-team-fg, var(--oc-green));
   font-size: 10.5px;
   font-style: italic;
   margin-top: 3px;
+}
+
+.oc-card__note-icon {
+  flex: none;
+  width: 11px;
+  height: 11px;
+  margin-top: 1px;
 }
