@@ -219,6 +219,7 @@ function addOpenRole(d, managerId, { id, title, note }) {
 const NOW = { text: 'Immediate hire', icon: 'bolt' }
 const FEBRUARY = { text: 'February hire', icon: 'calendar' }
 const LATER = { text: '2027 hire once cashflow positive', icon: 'hourglass' }
+const Q4_2027 = { text: '2027 Q4 Hire', icon: 'calendar' }
 
 // ── Layout helpers ─────────────────────────────────────────────────────────
 // Reporting line and visual placement are separate concerns (see org.js), so
@@ -448,12 +449,12 @@ export const versions = [
       addOpenRole(d, 'dave-hopp', {
         id: 'tbd-account-executives',
         title: 'Multiple Account Executives',
-        note: LATER,
+        note: Q4_2027,
       })
       addOpenRole(d, 'dave-hopp', {
         id: 'tbd-business-development-reps',
         title: 'Multiple Business Development Representatives',
-        note: LATER,
+        note: Q4_2027,
       })
 
       setGroupColumns(d, 'dave-hopp', [
@@ -539,7 +540,7 @@ export const versions = [
       addOpenRole(d, 'shaun-conway', {
         id: 'tbd-ssm-2027',
         title: 'School Success Manager',
-        note: LATER,
+        note: Q4_2027,
       })
 
       // Client Success splits into two columns like Sales: the school success
