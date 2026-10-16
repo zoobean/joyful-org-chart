@@ -1,8 +1,14 @@
-/* The frame the graphic is cut to: the size is set inline from FRAME. */
+/* The frame the graphic is cut to: the size is set inline from FRAME. It has
+   no background of its own, nor does the page behind it, so the exported PNG is
+   transparent and takes whatever slide it is dropped onto. */
 .gg-frame {
   position: relative;
   overflow: hidden;
-  background: var(--oc-bg);
+}
+
+html:has(.gg-frame),
+body:has(.gg-frame) {
+  background: transparent;
 }
 
 /* The graphic at its natural size, scaled and centred into the frame. */
@@ -36,6 +42,13 @@
 
 .gg-stage .oc-group-cols {
   gap: 16px;
+}
+
+/* An open role is normally hollow, which reads against the chart's off-white
+   page. With no page behind it, fill it like every other card so its text stays
+   legible on any slide; the dotted border still marks it as open. */
+.gg-stage .oc-card--open {
+  background: var(--oc-card-bg);
 }
 
 /* No team pill. Its spine (a ::before) goes with it; the bus draws the

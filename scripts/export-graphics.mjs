@@ -9,7 +9,7 @@
 // Starts its own dev server and drives a headless Chromium over the DevTools
 // protocol — nothing to install, but it does need one: it uses Playwright's
 // cached chrome-headless-shell (or whatever CHROME_PATH points at). The
-// pictures land in exports/group-graphics/.
+// pictures land in exports/group-graphics/, on a transparent background.
 
 import { spawn } from 'node:child_process'
 import { existsSync, readdirSync } from 'node:fs'
@@ -98,6 +98,8 @@ async function main() {
       const { sessionId } = await browser.send('Target.attachToTarget', { targetId, flatten: true })
       const page = (method, params) => browser.send(method, params, sessionId)
 
+      // Without this the screenshot is painted on white.
+      await page('Emulation.setDefaultBackgroundColorOverride', { color: { r: 0, g: 0, b: 0, a: 0 } })
       await page('Emulation.setDeviceMetricsOverride', {
         width: FRAME.width,
         height: FRAME.height,
