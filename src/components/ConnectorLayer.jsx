@@ -38,7 +38,7 @@ function busTopology(layout, getTeam) {
 // by the current zoom — dividing by `scale` here converts them back to
 // natural units, which is what lets the SVG (itself a scaled child of the
 // same transformed canvas) line up with the cards at any zoom level.
-function box(el, cRect, scale) {
+export function box(el, cRect, scale) {
   const r = el.getBoundingClientRect()
   return {
     x: (r.left - cRect.left) / scale + r.width / scale / 2,
@@ -86,7 +86,7 @@ const leftX = (box) => box.left + 11
 // the FIRST kid's gutter x — that kid's drop is then just a continuation of
 // the leader's own vertical line past the rail, not a separate branch, so it
 // skips the rail-branch curve the other kids get.
-function curvedBusPath(m, kids, managerColor) {
+export function curvedBusPath(m, kids, managerColor) {
   const mx = leftX(m)
   // 10px is the geometric floor: a non-aligned kid's own rail-branch curve
   // (radius 7, landing at railY+7) needs to end before the kid's own top, so

@@ -78,7 +78,7 @@ function ReportColumn({ ids, slim, register }) {
 // feeds the sub-column heads. The whole block (card + pill) is the connector
 // anchor for the leader — the bus drop starts below the pill — so the ref goes
 // on the block, not the inner card.
-function Group({ group, register }) {
+export function Group({ group, register }) {
   const { getPerson, getTeam } = useOrgData()
   const leader = getPerson(group.leader)
   const leaderTeam = getTeam(group.leaderTeam)
