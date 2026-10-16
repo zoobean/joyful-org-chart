@@ -217,9 +217,9 @@ function addOpenRole(d, managerId, { id, title, note }) {
 // When an open role is to be filled, as the card words it, with the icon that
 // goes beside it (see NOTE_ICONS in PersonCard).
 const NOW = { text: 'Immediate hire', icon: 'bolt' }
-const FEBRUARY = { text: 'February hire', icon: 'calendar' }
 const LATER = { text: '2027 hire once cashflow positive', icon: 'hourglass' }
 const Q4_2027 = { text: '2027 Q4 Hire', icon: 'calendar' }
+const TBD_2027 = { text: '2027 TBD hires', icon: 'calendar' }
 
 // ── Layout helpers ─────────────────────────────────────────────────────────
 // Reporting line and visual placement are separate concerns (see org.js), so
@@ -392,11 +392,6 @@ export const versions = [
         title: 'Senior Product Manager',
         note: NOW,
       })
-      addOpenRole(d, 'elizabeth-ross', {
-        id: 'tbd-product-support-associate',
-        title: 'Product Support Associate',
-        note: LATER,
-      })
 
       // Lindsey joins Sales under Hopp himself. She rendered beside Business
       // operations as a card whose reporting line pointed at Lainey, so that
@@ -525,7 +520,9 @@ export const versions = [
       ])
       orderReports(d, 'antonio-chavez', ['alejandro-zaizar', 'vincent-mendiola', 'armando-duran', 'josh-joson'])
 
-      // Emily's role is gone. Three School Success seats open under Shaun.
+      // Emily's role is gone. One School Success seat is open now, and the later
+      // Success and Support hires (two School Success Managers, one Product
+      // Support Associate) are a single box rather than three.
       remove(d, 'emily-peterson')
       addOpenRole(d, 'shaun-conway', {
         id: 'tbd-associate-ssm',
@@ -533,14 +530,9 @@ export const versions = [
         note: NOW,
       })
       addOpenRole(d, 'shaun-conway', {
-        id: 'tbd-ssm-february',
-        title: 'School Success Manager',
-        note: FEBRUARY,
-      })
-      addOpenRole(d, 'shaun-conway', {
-        id: 'tbd-ssm-2027',
-        title: 'School Success Manager',
-        note: Q4_2027,
+        id: 'tbd-success-support',
+        title: 'Success & Support Team Member(s)',
+        note: TBD_2027,
       })
 
       // Client Success splits into two columns like Sales: the school success
@@ -552,8 +544,7 @@ export const versions = [
           'kelly-williams',
           'stella-bromley',
           'tbd-associate-ssm',
-          'tbd-ssm-february',
-          'tbd-ssm-2027',
+          'tbd-success-support',
         ],
         ['cleo-joyce', 'elizabeth-ross'],
       ])

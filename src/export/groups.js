@@ -63,8 +63,7 @@ export const GROUPS = [
     columns: [
       ['lauren-hantzes'],
       ['tammy-mcintyre'],
-      ['kelly-williams', 'stella-bromley'],
-      ['tbd-associate-ssm', 'tbd-ssm-february', 'tbd-ssm-2027'],
+      ['kelly-williams', 'stella-bromley', 'tbd-associate-ssm', 'tbd-success-support'],
       ['cleo-joyce'],
       ['elizabeth-ross'],
     ],
