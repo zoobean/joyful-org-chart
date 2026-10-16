@@ -218,7 +218,6 @@ function addOpenRole(d, managerId, { id, title, note }) {
 // goes beside it (see NOTE_ICONS in PersonCard).
 const NOW = { text: 'Immediate hire', icon: 'bolt' }
 const LATER = { text: '2027 hire once cashflow positive', icon: 'hourglass' }
-const Q4_2027 = { text: '2027 Q4 Hire', icon: 'calendar' }
 const TBD_2027 = { text: '2027 TBD hires', icon: 'calendar' }
 
 // ── Layout helpers ─────────────────────────────────────────────────────────
@@ -443,13 +442,13 @@ export const versions = [
       // hires, and sits at the foot of its group's column.
       addOpenRole(d, 'dave-hopp', {
         id: 'tbd-account-executives',
-        title: 'Multiple Account Executives',
-        note: Q4_2027,
+        title: 'Account Executive(s)',
+        note: TBD_2027,
       })
       addOpenRole(d, 'dave-hopp', {
         id: 'tbd-business-development-reps',
-        title: 'Multiple Business Development Representatives',
-        note: Q4_2027,
+        title: 'Business Development Representative(s)',
+        note: TBD_2027,
       })
 
       setGroupColumns(d, 'dave-hopp', [

@@ -18,16 +18,17 @@ const CARD_WIDTHS = [240, 230, 220, 210, 200, 190, 180, 170, 160]
 const MAX_SCALE = 1
 
 // One group, drawn the way the chart draws it (a Group: the leader and a bus
-// down to the columns, minus the team pill) and then scaled to fit the frame. The graphic is
-// Version 1's data. Once the web font has loaded and everything is measured,
-// `window.__exportReady` flips to true — that is what the export script waits
-// for before taking its picture.
+// down to the columns, minus the team pill) and then scaled to fit the frame.
+// The graphic is Version 1's data unless the group names another version. Once
+// the web font has loaded and everything is measured, `window.__exportReady`
+// flips to true — that is what the export script waits for before taking its
+// picture.
 export default function GroupGraphic({ id }) {
   const spec = GROUPS.find((g) => g.id === id)
   if (!spec) throw new Error(`No group graphic "${id}"`)
 
   const data = useMemo(() => {
-    const d = getVersion('v1').build()
+    const d = getVersion(spec.version ?? 'v1').build()
     if (!d.teams.some((t) => t.id === spec.team)) {
       d.teams.push({ id: spec.team, name: spec.label, head: spec.leader })
     }

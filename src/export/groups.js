@@ -1,4 +1,5 @@
-// The presentation graphics: one per group, cut from Version 1.
+// The presentation graphics: one per group, cut from Version 1 unless a group
+// names another `version`.
 //
 // A graphic is a group's leader with their direct reports laid out in columns,
 // the same shape as Dave Hopp's group on the chart. Each column lists the
@@ -39,6 +40,8 @@ export const GROUPS = [
   },
   {
     id: 'sales',
+    // The sales slide uses the nameless Version 2: roles only, no names.
+    version: 'v2',
     leader: 'dave-hopp',
     team: 'school-sales',
     columns: [
