@@ -15,7 +15,7 @@
 }
 
 /* PALS is not a team in Version 1 — Jillian sits in Lainey's group — so it
-   takes that group's purple. */
+   takes that group's purple (see `team` in groups.js). */
 [data-team='pals'] {
   --oc-team-bg: #e3dcf5;
   --oc-team-fg: #574194;
@@ -23,8 +23,8 @@
 
 /* ── Tighter than the chart ─────────────────────────────────────────────────
    A group has to fit 768x250, which scales its text down; the tighter it is,
-   the less it scales. So cards are narrower and the team pill sits beside the
-   leader rather than under it, which takes a row out of the top. */
+   the less it scales. So cards are narrower and there is no team pill: the
+   leader's card says what the group is, and the file name does the rest. */
 .gg-stage .oc-col--slim,
 .gg-stage .oc-leader-block {
   width: var(--gg-card-width, 180px);
@@ -38,28 +38,8 @@
   gap: 16px;
 }
 
-/* The pill moves out of the flow, to the right of the leader card. Its spine
-   (a ::before) goes with it, so it is dropped: the bus draws the leader's own
-   line from the bottom of the card. */
-.gg-stage .oc-leader-block {
-  position: relative;
-}
-
-.gg-stage .oc-leader-block .oc-pill-row {
-  position: absolute;
-  left: calc(100% + 8px);
-  top: 50%;
-  transform: translateY(-50%);
-  margin: 0;
-  padding-left: 0;
-  white-space: nowrap;
-}
-
-.gg-stage .oc-leader-block .oc-pill-row::before {
+/* No team pill. Its spine (a ::before) goes with it; the bus draws the
+   leader's own line from the bottom of the card instead. */
+.gg-stage .oc-pill-row {
   display: none;
-}
-
-.gg-stage .oc-pill {
-  border-radius: 999px;
-  padding: 3px 10px;
 }

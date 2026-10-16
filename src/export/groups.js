@@ -6,8 +6,8 @@
 // beneath. The columns are chosen to keep each graphic short and wide, since
 // they have to fit a 768x250 frame.
 //
-// `team` colours the graphic and names its pill. A team that Version 1 doesn't
-// have (PALS) is made up from `label`.
+// `team` colours the graphic. A team that Version 1 doesn't have (PALS) is made
+// up from `label`, which nothing shows — a graphic has no team pill.
 
 export const FRAME = { width: 768, height: 250 }
 
