@@ -21,6 +21,30 @@ const MAX_SCALE = 1
 // The chart's own slim column width, for a graphic that isn't cut to a frame.
 const CONTENT_CARD_WIDTH = 200
 
+// A bus for a manager centred above their reports: a stem down from the middle
+// of the manager's card to a rail, and a drop into the top of each report. The
+// rail's two ends turn down with the same corner radius as the chart's buses.
+function centeredBusPath(m, kids, color) {
+  const r = 7
+  const railY = Math.min(...kids.map((k) => k.top)) - 14
+  const xs = kids.map((k) => k.x)
+  const first = Math.min(...xs)
+  const last = Math.max(...xs)
+  const at = (x, edge) => Math.abs(x - edge) < 0.5
+  return [
+    { d: `M ${m.x} ${m.bottom} V ${railY}`, color },
+    { d: `M ${first + r} ${railY} H ${last - r}`, color },
+    ...kids.map(({ x, top }) => ({
+      d: at(x, first)
+        ? `M ${x + r} ${railY} Q ${x} ${railY} ${x} ${railY + r} V ${top}`
+        : at(x, last)
+          ? `M ${x - r} ${railY} Q ${x} ${railY} ${x} ${railY + r} V ${top}`
+          : `M ${x} ${railY} V ${top}`,
+      color,
+    })),
+  ]
+}
+
 // A group laid out the way the chart lays out one (see Group in OrgChart.jsx):
 // the leader, then a bus down to columns of their direct reports. There is no
 // team pill. If the group has a `boss`, that person's card sits to the leader's
@@ -28,7 +52,10 @@ const CONTENT_CARD_WIDTH = 200
 function ExportGroup({ spec, register }) {
   const { getPerson, teamByHead } = useOrgData()
   return (
-    <div className={`oc-group${spec.boss ? ' gg-has-boss' : ''}`} data-team={spec.team}>
+    <div
+      className={['oc-group', spec.boss && 'gg-has-boss', spec.center && 'gg-centered'].filter(Boolean).join(' ')}
+      data-team={spec.team}
+    >
       <div className="oc-leader-wrap gg-lead-row">
         {spec.boss && (
           <div className="gg-boss">
@@ -123,7 +150,8 @@ export default function GroupGraphic({ id }) {
         .getPropertyValue('--oc-team-bg')
         .trim()
       const kids = spec.columns.flat().map((kid) => ({ ...card(kid), color }))
-      const paths = curvedBusPath(box(anchors.get(spec.leader), cRect, 1), kids, color)
+      const leaderBox = box(anchors.get(spec.leader), cRect, 1)
+      const paths = (spec.center ? centeredBusPath : curvedBusPath)(leaderBox, kids, color)
 
       // The boss's line runs straight across to the leader's card (they are
       // centred on one another), in the group's colour.

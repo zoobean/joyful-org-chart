@@ -16,6 +16,8 @@
 //             in its own department's colours.
 //   `fit: 'content'` — no 768x250 frame: the image is cut to the graphic itself,
 //             at the chart's own card size.
+// And `center` puts the leader in the middle above the row of reports, with a
+// drop into the top of each, rather than at the left.
 
 export const FRAME = { width: 768, height: 250 }
 
@@ -35,6 +37,7 @@ export const GROUPS = [
     team: 'neutral',
     flat: true,
     fit: 'content',
+    center: true,
     columns: [['kelly-hiser'], ['lainey-franks'], ['dave-hopp'], ['shaun-conway'], ['tyler-ewing']],
   },
   {

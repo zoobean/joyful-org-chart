@@ -69,6 +69,21 @@ body:has(.gg-frame) {
   margin-left: calc(var(--gg-card-width, 180px) + 36px + 21px);
 }
 
+/* A centred leader: over the middle of the row, with a little more room for the
+   rail. The columns lose the indent that lined their first one up under a leader
+   at the left, so the row's middle is the leader's. */
+.gg-centered .gg-lead-row {
+  justify-content: center;
+}
+
+.gg-centered.oc-group > .oc-leader-wrap {
+  margin-bottom: 28px;
+}
+
+.gg-centered .oc-group-cols {
+  margin-left: 0;
+}
+
 /* Felix's direct reports sit inside his neutral group, so they would inherit its
    grey card border; each takes its own department's border instead. (On the
    chart they are not nested in his group, so this never comes up.) */
