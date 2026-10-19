@@ -520,32 +520,35 @@ export const versions = [
       ])
       orderReports(d, 'antonio-chavez', ['alejandro-zaizar', 'vincent-mendiola', 'armando-duran', 'josh-joson'])
 
-      // Emily's role is gone. One School Success seat is open now, and the later
-      // Success and Support hires (two School Success Managers, one Product
-      // Support Associate) are a single box rather than three.
+      // ── Client Success ───────────────────────────────────────────────────
+      // Stated as its finished shape. Emily's role is gone; Kelly W. and Stella
+      // move under the two team leads; the one open seat is School Success
+      // Manager(s). orderReports checks every list is complete.
       remove(d, 'emily-peterson')
+      move(d, 'kelly-williams', 'lauren-hantzes')
+      move(d, 'stella-bromley', 'tammy-mcintyre')
       addOpenRole(d, 'shaun-conway', {
         id: 'tbd-associate-ssm',
         title: 'Associate School Success Manager(s)',
         note: NOW,
       })
-      addOpenRole(d, 'shaun-conway', {
-        id: 'tbd-success-support',
-        title: 'Success & Support Team Member(s)',
-        note: TBD_2027,
-      })
+
+      orderReports(d, 'shaun-conway', [
+        'lauren-hantzes',
+        'tammy-mcintyre',
+        'tbd-associate-ssm',
+        'cleo-joyce',
+        'elizabeth-ross',
+      ])
+      orderReports(d, 'lauren-hantzes', ['danysha-ligon', 'hugh-burke', 'kelly-williams'])
+      orderReports(d, 'tammy-mcintyre', ['alexandra-tolbert', 'stella-bromley', 'vickie-blankenship'])
+      orderReports(d, 'cleo-joyce', ['heidi-kunkel', 'kat-gatcomb'])
+      orderReports(d, 'elizabeth-ross', ['camille-perez', 'simon-desalvo'])
 
       // Client Success splits into two columns like Sales: the school success
-      // people and their open seats, then the two teams that moved in above.
+      // leads and their open seat, then the two teams that moved in above.
       regroup(d, 'school-client-success', [
-        [
-          'lauren-hantzes',
-          'tammy-mcintyre',
-          'kelly-williams',
-          'stella-bromley',
-          'tbd-associate-ssm',
-          'tbd-success-support',
-        ],
+        ['lauren-hantzes', 'tammy-mcintyre', 'tbd-associate-ssm'],
         ['cleo-joyce', 'elizabeth-ross'],
       ])
 
@@ -563,16 +566,17 @@ export const versions = [
   {
     id: 'v2',
     name: 'Version 2',
-    // Version 1, except School Sales shows roles only: every name under Hopp is
-    // removed, with all the titles and the structure left exactly as they are.
-    // Jillian and Joe report to Lainey here, as in Version 1, so they are not
-    // part of School Sales and keep their names. Built ON Version 1 rather than
+    // Version 1, except School Sales and Client Success show roles only: every
+    // name under Hopp and under Shaun is removed, with all the titles and the
+    // structure left exactly as they are. Jillian and Joe report to Lainey here,
+    // as in Version 1, so they are not part of School Sales and keep their names. Built ON Version 1 rather than
     // copied from it, so Version 1's own definition is untouched — but later
     // edits to Version 1 flow through to this one.
     build() {
       const d = versions.find((v) => v.id === 'v1').build()
 
       blankNamesUnder(d, 'dave-hopp')
+      blankNamesUnder(d, 'shaun-conway')
 
       // Plain titles: no seniority or qualifier. Exact-match swaps, applied
       // chart-wide, so Principal Account Executive and the PALS titles stay.

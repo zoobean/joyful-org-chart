@@ -13,6 +13,14 @@
 
 export const FRAME = { width: 768, height: 250 }
 
+const CS_COLUMNS = [
+  ['lauren-hantzes'],
+  ['tammy-mcintyre'],
+  ['tbd-associate-ssm'],
+  ['cleo-joyce'],
+  ['elizabeth-ross'],
+]
+
 export const GROUPS = [
   {
     id: 'product',
@@ -65,13 +73,15 @@ export const GROUPS = [
     id: 'cs',
     leader: 'shaun-conway',
     team: 'school-client-success',
-    columns: [
-      ['lauren-hantzes'],
-      ['tammy-mcintyre'],
-      ['kelly-williams', 'stella-bromley', 'tbd-associate-ssm', 'tbd-success-support'],
-      ['cleo-joyce'],
-      ['elizabeth-ross'],
-    ],
+    columns: CS_COLUMNS,
+  },
+  {
+    // The same graphic from the nameless Version 2.
+    id: 'cs-nameless',
+    version: 'v2',
+    leader: 'shaun-conway',
+    team: 'school-client-success',
+    columns: CS_COLUMNS,
   },
   {
     id: 'finance',
