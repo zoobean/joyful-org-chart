@@ -119,10 +119,27 @@ async function main() {
       }
       if (!ready) throw new Error(`"${group.id}" never finished rendering`)
 
+      // A graphic cut to its content reports its own size; the others are the
+      // frame.
+      const { result: sized } = await page('Runtime.evaluate', {
+        expression: 'window.__exportSize',
+        returnByValue: true,
+      })
+      const size = group.fit === 'content' ? sized.value : FRAME
+      if (group.fit === 'content') {
+        await page('Emulation.setDeviceMetricsOverride', {
+          width: size.width,
+          height: size.height,
+          deviceScaleFactor: scale,
+          mobile: false,
+        })
+        await sleep(300)
+      }
+
       const { data } = await page('Page.captureScreenshot', { format: 'png' })
       const file = join(outDir, `${group.id}.png`)
       await writeFile(file, Buffer.from(data, 'base64'))
-      console.log(`${group.id}: ${FRAME.width * scale}x${FRAME.height * scale} → ${file}`)
+      console.log(`${group.id}: ${size.width * scale}x${size.height * scale} → ${file}`)
       await browser.send('Target.closeTarget', { targetId })
     }
   } finally {

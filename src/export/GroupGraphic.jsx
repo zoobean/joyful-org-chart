@@ -18,13 +18,15 @@ const CARD_WIDTHS = [240, 230, 220, 210, 200, 190, 180, 170, 160]
 // Small groups are left at their natural size rather than blown up to fill
 // the frame, so a card reads the same size from one graphic to the next.
 const MAX_SCALE = 1
+// The chart's own slim column width, for a graphic that isn't cut to a frame.
+const CONTENT_CARD_WIDTH = 200
 
 // A group laid out the way the chart lays out one (see Group in OrgChart.jsx):
 // the leader, then a bus down to columns of their direct reports. There is no
 // team pill. If the group has a `boss`, that person's card sits to the leader's
 // left, level with it and joined by a line, in the group's colours like the rest.
 function ExportGroup({ spec, register }) {
-  const { getPerson } = useOrgData()
+  const { getPerson, teamByHead } = useOrgData()
   return (
     <div className={`oc-group${spec.boss ? ' gg-has-boss' : ''}`} data-team={spec.team}>
       <div className="oc-leader-wrap gg-lead-row">
@@ -39,10 +41,18 @@ function ExportGroup({ spec, register }) {
       </div>
       <div className="oc-group-cols">
         {spec.columns.map((ids) => (
-          <div key={ids[0]} className="oc-col oc-col--slim">
-            {ids.map((kid) => (
-              <ReportNode key={kid} person={getPerson(kid)} register={register} />
-            ))}
+          <div
+            key={ids[0]}
+            className="oc-col oc-col--slim"
+            data-team={spec.flat ? teamByHead.get(ids[0])?.id : undefined}
+          >
+            {ids.map((kid) =>
+              spec.flat ? (
+                <PersonCard key={kid} ref={register(kid)} person={getPerson(kid)} />
+              ) : (
+                <ReportNode key={kid} person={getPerson(kid)} register={register} />
+              )
+            )}
           </div>
         ))}
       </div>
@@ -90,13 +100,18 @@ export default function GroupGraphic({ id }) {
         )
         return { width, height, scale }
       }
+      // A graphic cut to its content keeps the chart's own card width and is
+      // never scaled; the others try each width and keep whichever renders
+      // largest in the frame.
+      const content = spec.fit === 'content'
       let best = null
-      for (const cardWidth of CARD_WIDTHS) {
+      for (const cardWidth of content ? [CONTENT_CARD_WIDTH] : CARD_WIDTHS) {
         stage.style.setProperty('--gg-card-width', `${cardWidth}px`)
         const f = fit()
         // Widest wins a tie: only a real gain in size moves the choice.
         if (!best || f.scale > best.scale + 0.001) best = { ...f, cardWidth }
       }
+      if (content) best.scale = 1
       stage.style.setProperty('--gg-card-width', `${best.cardWidth}px`)
       // Measured before any scale is applied, so these are natural pixels.
       const cRect = stage.getBoundingClientRect()
@@ -121,7 +136,19 @@ export default function GroupGraphic({ id }) {
         paths.push({ d: `M ${from.right - cRect.left} ${y} H ${to.left - cRect.left}`, color })
       }
 
-      setLayout({ paths, width: best.width, height: best.height, scale: best.scale, cardWidth: best.cardWidth })
+      // The size the picture is cut to: the frame, or the graphic plus a margin.
+      const frame = content
+        ? { width: best.width + PADDING * 2, height: best.height + PADDING * 2 }
+        : FRAME
+      window.__exportSize = frame
+      setLayout({
+        paths,
+        width: best.width,
+        height: best.height,
+        scale: best.scale,
+        cardWidth: best.cardWidth,
+        frame,
+      })
       // After React has painted the scaled result.
       requestAnimationFrame(() => requestAnimationFrame(() => (window.__exportReady = true)))
     })
@@ -131,12 +158,13 @@ export default function GroupGraphic({ id }) {
   }, [spec])
 
   const scale = layout?.scale ?? 1
-  const x = layout ? (FRAME.width - layout.width * scale) / 2 : 0
-  const y = layout ? (FRAME.height - layout.height * scale) / 2 : 0
+  const frame = layout?.frame ?? FRAME
+  const x = layout ? (frame.width - layout.width * scale) / 2 : 0
+  const y = layout ? (frame.height - layout.height * scale) / 2 : 0
 
   return (
     <OrgDataContext.Provider value={data}>
-      <div className="gg-frame" style={{ width: FRAME.width, height: FRAME.height }}>
+      <div className="gg-frame" style={{ width: frame.width, height: frame.height }}>
         <div
           className="gg-stage"
           ref={stageRef}

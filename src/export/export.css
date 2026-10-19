@@ -68,3 +68,10 @@ body:has(.gg-frame) {
 .gg-has-boss .oc-group-cols {
   margin-left: calc(var(--gg-card-width, 180px) + 36px + 21px);
 }
+
+/* Felix's direct reports sit inside his neutral group, so they would inherit its
+   grey card border; each takes its own department's border instead. (On the
+   chart they are not nested in his group, so this never comes up.) */
+.gg-stage .oc-col[data-team] {
+  --oc-team-border: initial;
+}

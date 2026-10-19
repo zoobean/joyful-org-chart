@@ -10,6 +10,12 @@
 // `team` colours the graphic (PALS is not a team in Version 1, so export.css
 // gives it a colour of its own). `boss`, when given, puts that person's card
 // beside the leader.
+//
+// Two options for graphics that aren't a department cut to the frame:
+//   `flat`  — just the cards named in `columns`, with no one beneath them, each
+//             in its own department's colours.
+//   `fit: 'content'` — no 768x250 frame: the image is cut to the graphic itself,
+//             at the chart's own card size.
 
 export const FRAME = { width: 768, height: 250 }
 
@@ -22,6 +28,15 @@ const CS_COLUMNS = [
 ]
 
 export const GROUPS = [
+  {
+    // Felix and the people who report to him, and no one below them.
+    id: 'felix-direct-reports',
+    leader: 'felix-lloyd',
+    team: 'neutral',
+    flat: true,
+    fit: 'content',
+    columns: [['kelly-hiser'], ['lainey-franks'], ['dave-hopp'], ['shaun-conway'], ['tyler-ewing']],
+  },
   {
     id: 'product',
     leader: 'kelly-hiser',
