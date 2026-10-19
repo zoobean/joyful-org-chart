@@ -7,8 +7,9 @@
 // beneath. The columns are chosen to keep each graphic short and wide, since
 // they have to fit a 768x250 frame.
 //
-// `team` colours the graphic. A team that Version 1 doesn't have (PALS) is made
-// up from `label`, which nothing shows — a graphic has no team pill.
+// `team` colours the graphic (PALS is not a team in Version 1, so export.css
+// gives it a colour of its own). `boss`, when given, puts that person's card
+// beside the leader.
 
 export const FRAME = { width: 768, height: 250 }
 
@@ -32,6 +33,7 @@ export const GROUPS = [
   {
     id: 'marketing',
     leader: 'kelly-burke',
+    boss: 'lainey-franks',
     team: 'marketing',
     columns: [
       ['meghan-olivier', 'lilly-sundell-thomas'],
@@ -55,8 +57,8 @@ export const GROUPS = [
   {
     id: 'pals',
     leader: 'jillian-tweet',
+    boss: 'lainey-franks',
     team: 'pals',
-    label: 'PALS',
     columns: [['joe-barrette']],
   },
   {
@@ -74,6 +76,7 @@ export const GROUPS = [
   {
     id: 'finance',
     leader: 'akshat-khandelwal',
+    boss: 'lainey-franks',
     team: 'business-operations',
     columns: [
       ['alex-burnsides', 'katlin-williams', 'troy-pender'],

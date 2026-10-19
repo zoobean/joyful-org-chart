@@ -1,11 +1,13 @@
 import { useCallback, useLayoutEffect, useMemo, useRef, useState } from 'react'
-import { Group } from '../components/OrgChart.jsx'
+import PersonCard from '../components/PersonCard.jsx'
+import { ReportNode } from '../components/TeamColumn.jsx'
 import { box, curvedBusPath } from '../components/ConnectorLayer.jsx'
-import { OrgDataContext } from '../data/orgContext.js'
+import { OrgDataContext, useOrgData } from '../data/orgContext.js'
 import { createOrgData } from '../data/selectors.js'
 import { getVersion } from '../data/versions.js'
 import { FRAME, GROUPS } from './groups.js'
 import '../components/ConnectorLayer.css'
+import '../components/OrgChart.css'
 import './export.css'
 
 const PADDING = 12
@@ -17,8 +19,39 @@ const CARD_WIDTHS = [240, 230, 220, 210, 200, 190, 180, 170, 160]
 // the frame, so a card reads the same size from one graphic to the next.
 const MAX_SCALE = 1
 
-// One group, drawn the way the chart draws it (a Group: the leader and a bus
-// down to the columns, minus the team pill) and then scaled to fit the frame.
+// A group laid out the way the chart lays out one (see Group in OrgChart.jsx):
+// the leader, then a bus down to columns of their direct reports. There is no
+// team pill. If the group has a `boss`, that person's card sits to the leader's
+// left, level with it and joined by a line, in their own department's colours.
+function ExportGroup({ spec, register }) {
+  const { getPerson, teamByHead } = useOrgData()
+  const bossTeam = spec.boss && teamByHead.get(spec.boss)?.id
+  return (
+    <div className={`oc-group${spec.boss ? ' gg-has-boss' : ''}`} data-team={spec.team}>
+      <div className="oc-leader-wrap gg-lead-row">
+        {spec.boss && (
+          <div className="gg-boss" data-team={bossTeam}>
+            <PersonCard ref={register(spec.boss)} person={getPerson(spec.boss)} />
+          </div>
+        )}
+        <div className="oc-leader-block" ref={register(spec.leader)}>
+          <PersonCard person={getPerson(spec.leader)} />
+        </div>
+      </div>
+      <div className="oc-group-cols">
+        {spec.columns.map((ids) => (
+          <div key={ids[0]} className="oc-col oc-col--slim">
+            {ids.map((kid) => (
+              <ReportNode key={kid} person={getPerson(kid)} register={register} />
+            ))}
+          </div>
+        ))}
+      </div>
+    </div>
+  )
+}
+
+// One group, drawn the way the chart draws it and then scaled to fit the frame.
 // The graphic is Version 1's data unless the group names another version. Once
 // the web font has loaded and everything is measured, `window.__exportReady`
 // flips to true — that is what the export script waits for before taking its
@@ -27,22 +60,7 @@ export default function GroupGraphic({ id }) {
   const spec = GROUPS.find((g) => g.id === id)
   if (!spec) throw new Error(`No group graphic "${id}"`)
 
-  const data = useMemo(() => {
-    const d = getVersion(spec.version ?? 'v1').build()
-    if (!d.teams.some((t) => t.id === spec.team)) {
-      d.teams.push({ id: spec.team, name: spec.label, head: spec.leader })
-    }
-    return createOrgData(d)
-  }, [spec])
-
-  const group = useMemo(
-    () => ({
-      leader: spec.leader,
-      leaderTeam: spec.team,
-      columns: spec.columns.map((reports) => ({ reports, slim: true })),
-    }),
-    [spec]
-  )
+  const data = useMemo(() => createOrgData(getVersion(spec.version ?? 'v1').build()), [spec])
 
   const stageRef = useRef(null)
   const anchorsRef = useRef(new Map())
@@ -93,6 +111,20 @@ export default function GroupGraphic({ id }) {
       const kids = spec.columns.flat().map((kid) => ({ ...card(kid), color }))
       const paths = curvedBusPath(box(anchors.get(spec.leader), cRect, 1), kids, color)
 
+      // The boss's line runs straight across to the leader's card (they are
+      // centred on one another), in the boss's own colour like any other bus.
+      if (spec.boss) {
+        const bossCard = anchors.get(spec.boss)
+        const leaderCard = anchors.get(spec.leader).querySelector('.oc-card')
+        const from = bossCard.getBoundingClientRect()
+        const to = leaderCard.getBoundingClientRect()
+        const y = from.top + from.height / 2 - cRect.top
+        paths.push({
+          d: `M ${from.right - cRect.left} ${y} H ${to.left - cRect.left}`,
+          color: getComputedStyle(bossCard.closest('[data-team]')).getPropertyValue('--oc-team-bg').trim(),
+        })
+      }
+
       setLayout({ paths, width: best.width, height: best.height, scale: best.scale, cardWidth: best.cardWidth })
       // After React has painted the scaled result.
       requestAnimationFrame(() => requestAnimationFrame(() => (window.__exportReady = true)))
@@ -117,7 +149,7 @@ export default function GroupGraphic({ id }) {
             transform: `translate(${x}px, ${y}px) scale(${scale})`,
           }}
         >
-          <Group group={group} register={register} />
+          <ExportGroup spec={spec} register={register} />
           {layout && (
             <svg className="oc-canvas__lines" width={layout.width} height={layout.height} aria-hidden="true">
               {layout.paths.map((p, i) => (

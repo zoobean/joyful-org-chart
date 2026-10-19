@@ -51,8 +51,20 @@ body:has(.gg-frame) {
   background: var(--oc-card-bg);
 }
 
-/* No team pill. Its spine (a ::before) goes with it; the bus draws the
-   leader's own line from the bottom of the card instead. */
-.gg-stage .oc-pill-row {
-  display: none;
+/* A boss beside the leader: the leader's row holds both, centred on one another
+   and a gap apart, and the columns below shift right by the same amount so the
+   first one still hangs from the leader's own line. */
+.gg-lead-row {
+  display: flex;
+  align-items: center;
+  gap: 36px;
+}
+
+.gg-boss {
+  flex: none;
+  width: var(--gg-card-width, 180px);
+}
+
+.gg-has-boss .oc-group-cols {
+  margin-left: calc(var(--gg-card-width, 180px) + 36px + 21px);
 }
