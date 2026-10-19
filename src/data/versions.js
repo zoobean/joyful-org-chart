@@ -219,6 +219,7 @@ function addOpenRole(d, managerId, { id, title, note }) {
 const NOW = { text: 'Immediate hire', icon: 'bolt' }
 const LATER = { text: '2027 hire once cashflow positive', icon: 'hourglass' }
 const TBD_2027 = { text: '2027 TBD hires', icon: 'calendar' }
+const TBD_2026_OR_2027 = { text: '2026 and/or 2027 TBD hires', icon: 'calendar' }
 
 // ── Layout helpers ─────────────────────────────────────────────────────────
 // Reporting line and visual placement are separate concerns (see org.js), so
@@ -443,7 +444,7 @@ export const versions = [
       addOpenRole(d, 'dave-hopp', {
         id: 'tbd-account-executives',
         title: 'Account Executive(s)',
-        note: TBD_2027,
+        note: TBD_2026_OR_2027,
       })
       addOpenRole(d, 'dave-hopp', {
         id: 'tbd-business-development-reps',
@@ -525,7 +526,7 @@ export const versions = [
       remove(d, 'emily-peterson')
       addOpenRole(d, 'shaun-conway', {
         id: 'tbd-associate-ssm',
-        title: 'Associate School Success Manager',
+        title: 'Associate School Success Manager(s)',
         note: NOW,
       })
       addOpenRole(d, 'shaun-conway', {
