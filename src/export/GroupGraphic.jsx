@@ -22,15 +22,14 @@ const MAX_SCALE = 1
 // A group laid out the way the chart lays out one (see Group in OrgChart.jsx):
 // the leader, then a bus down to columns of their direct reports. There is no
 // team pill. If the group has a `boss`, that person's card sits to the leader's
-// left, level with it and joined by a line, in their own department's colours.
+// left, level with it and joined by a line, in the group's colours like the rest.
 function ExportGroup({ spec, register }) {
-  const { getPerson, teamByHead } = useOrgData()
-  const bossTeam = spec.boss && teamByHead.get(spec.boss)?.id
+  const { getPerson } = useOrgData()
   return (
     <div className={`oc-group${spec.boss ? ' gg-has-boss' : ''}`} data-team={spec.team}>
       <div className="oc-leader-wrap gg-lead-row">
         {spec.boss && (
-          <div className="gg-boss" data-team={bossTeam}>
+          <div className="gg-boss">
             <PersonCard ref={register(spec.boss)} person={getPerson(spec.boss)} />
           </div>
         )}
@@ -112,17 +111,14 @@ export default function GroupGraphic({ id }) {
       const paths = curvedBusPath(box(anchors.get(spec.leader), cRect, 1), kids, color)
 
       // The boss's line runs straight across to the leader's card (they are
-      // centred on one another), in the boss's own colour like any other bus.
+      // centred on one another), in the group's colour.
       if (spec.boss) {
         const bossCard = anchors.get(spec.boss)
         const leaderCard = anchors.get(spec.leader).querySelector('.oc-card')
         const from = bossCard.getBoundingClientRect()
         const to = leaderCard.getBoundingClientRect()
         const y = from.top + from.height / 2 - cRect.top
-        paths.push({
-          d: `M ${from.right - cRect.left} ${y} H ${to.left - cRect.left}`,
-          color: getComputedStyle(bossCard.closest('[data-team]')).getPropertyValue('--oc-team-bg').trim(),
-        })
+        paths.push({ d: `M ${from.right - cRect.left} ${y} H ${to.left - cRect.left}`, color })
       }
 
       setLayout({ paths, width: best.width, height: best.height, scale: best.scale, cardWidth: best.cardWidth })
