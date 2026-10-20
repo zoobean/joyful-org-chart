@@ -33,6 +33,17 @@ const CS_COLUMNS = [
 
 export const GROUPS = [
   {
+    // Lainey and the people who report to her, and no one below them. Jillian is
+    // not a department head, so her card keeps Lainey's own colours.
+    id: 'lainey-direct-reports',
+    leader: 'lainey-franks',
+    team: 'business-optimization',
+    flat: true,
+    fit: 'content',
+    center: true,
+    columns: [['kelly-burke'], ['akshat-khandelwal'], ['jillian-tweet']],
+  },
+  {
     // Felix and the people who report to him, and no one below them.
     id: 'felix-direct-reports',
     leader: 'felix-lloyd',
