@@ -469,7 +469,7 @@ export const versions = [
 
       addOpenRole(d, 'kelly-burke', {
         id: 'tbd-marketing-manager-community-events',
-        title: 'Marketing Manager, Community & Events',
+        title: 'Marketing Manager',
         note: NOW,
       })
 
