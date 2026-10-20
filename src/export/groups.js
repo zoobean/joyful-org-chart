@@ -16,6 +16,8 @@
 //             in its own department's colours.
 //   `fit: 'content'` — no 768x250 frame: the image is cut to the graphic itself,
 //             at the chart's own card size.
+// `people` changes how particular cards read in this graphic only — a `name`
+// and/or `title` per person id — without touching the chart's versions.
 // And `center` puts the leader in the middle above the row of reports, with a
 // drop into the top of each, rather than at the left.
 
@@ -68,8 +70,19 @@ export const GROUPS = [
   },
   {
     id: 'sales',
-    // The sales slide uses the nameless Version 2: roles only, no names.
+    // The sales slide uses the nameless Version 2: roles only, no names — except
+    // the four team heads, who are named, and the two BDR leads, whose titles say
+    // which side they lead.
     version: 'v2',
+    people: {
+      'coley-martin': { name: 'Coley Martin' },
+      'don-giacomini': { name: 'Don Giacomini' },
+      'lauren-brami': { name: 'Lauren Brami', title: 'Business Development Team Lead - Buildings' },
+      'michael-kideckel': {
+        name: 'Michael Kideckel',
+        title: 'Business Development Team Lead - Districts',
+      },
+    },
     leader: 'dave-hopp',
     team: 'school-sales',
     columns: [

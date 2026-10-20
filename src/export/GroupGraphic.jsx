@@ -21,6 +21,9 @@ const MAX_SCALE = 1
 // The chart's own slim column width, for a graphic that isn't cut to a frame.
 const CONTENT_CARD_WIDTH = 200
 
+const findPerson = (node, id) =>
+  node.id === id ? node : node.reports.reduce((hit, r) => hit || findPerson(r, id), null)
+
 // A bus for a manager centred above their reports: a stem down from the middle
 // of the manager's card to a rail, and a drop into the top of each report. The
 // rail's two ends turn down with the same corner radius as the chart's buses.
@@ -96,7 +99,13 @@ export default function GroupGraphic({ id }) {
   const spec = GROUPS.find((g) => g.id === id)
   if (!spec) throw new Error(`No group graphic "${id}"`)
 
-  const data = useMemo(() => createOrgData(getVersion(spec.version ?? 'v1').build()), [spec])
+  const data = useMemo(() => {
+    const d = getVersion(spec.version ?? 'v1').build()
+    for (const [personId, patch] of Object.entries(spec.people ?? {})) {
+      Object.assign(findPerson(d.org, personId), patch)
+    }
+    return createOrgData(d)
+  }, [spec])
 
   const stageRef = useRef(null)
   const anchorsRef = useRef(new Map())
