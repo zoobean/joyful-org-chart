@@ -410,15 +410,16 @@ export const versions = [
       retitle(d, 'don-giacomini', 'Regional Sales Manager')
 
       // Don takes the Regional Sales Manager seat and Bryana the Senior Account
-      // Executive one, so both go back to their own names.
+      // Executive one, so both go back to their own names. Beth and Bryana have
+      // traded teams: Beth is on Coley's, Bryana on Don's, each keeping her title.
       assignTeam(d, 'coley-martin', [
         ['chelsea-mccoy', 'Senior Account Executive'],
-        ['bryana-snyder', 'Senior Account Executive'],
+        ['beth-halaz', 'Account Executive'],
         ['jessica-fulton', 'Account Executive'],
       ])
       assignTeam(d, 'don-giacomini', [
         ['becca-traxler', 'Account Executive'],
-        ['beth-halaz', 'Account Executive'],
+        ['bryana-snyder', 'Senior Account Executive'],
         ['amanda-taylor', 'Associate Account Executive'],
       ])
       assignTeam(d, 'jillian-tweet', [['joe-barrette', 'Account Executive, PALS']])
@@ -521,10 +522,13 @@ export const versions = [
       orderReports(d, 'antonio-chavez', ['alejandro-zaizar', 'vincent-mendiola', 'armando-duran', 'josh-joson'])
 
       // ── Client Success ───────────────────────────────────────────────────
-      // Stated as its finished shape. Emily's role is gone; Kelly W. and Stella
-      // move under the two team leads; the one open seat is School Success
-      // Manager(s). orderReports checks every list is complete.
+      // Stated as its finished shape. Emily's role is gone; the two team leads
+      // are team managers, with Kelly W. and Stella moved under them; the one
+      // open seat is School Success Manager(s). orderReports checks every list
+      // is complete.
       remove(d, 'emily-peterson')
+      retitle(d, 'lauren-hantzes', 'School Success Team Manager')
+      retitle(d, 'tammy-mcintyre', 'School Success Team Manager')
       move(d, 'kelly-williams', 'lauren-hantzes')
       move(d, 'stella-bromley', 'tammy-mcintyre')
       addOpenRole(d, 'shaun-conway', {
