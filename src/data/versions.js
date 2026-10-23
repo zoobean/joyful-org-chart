@@ -422,7 +422,7 @@ export const versions = [
         ['bryana-snyder', 'Senior Account Executive'],
         ['amanda-taylor', 'Associate Account Executive'],
       ])
-      assignTeam(d, 'jillian-tweet', [['joe-barrette', 'Account Executive, PALS']])
+      assignTeam(d, 'jillian-tweet', [['joe-barrette', 'Account Executive']])
       assignTeam(d, 'lauren-brami', [
         ['haven-gotham', 'Senior BDR'],
         ['andrea-mullon', 'BDR'],
@@ -583,7 +583,7 @@ export const versions = [
       blankNamesUnder(d, 'shaun-conway')
 
       // Plain titles: no seniority or qualifier. Exact-match swaps, applied
-      // chart-wide, so Principal Account Executive and the PALS titles stay.
+      // chart-wide, so Principal Account Executive and Jillian's PALS title stay.
       retitleAll(d, 'Senior Account Executive', 'Account Executive')
       retitleAll(d, 'Associate Account Executive', 'Account Executive')
       retitleAll(d, 'Senior BDR', 'BDR')
