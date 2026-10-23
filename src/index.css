@@ -68,7 +68,8 @@
   --oc-team-fg: #855310;
 }
 
-[data-team='pal'] {
+[data-team='pal'],
+[data-team='pals-sales'] {
   --oc-team-bg: #d4e3fb;
   --oc-team-fg: #285a9e;
 }

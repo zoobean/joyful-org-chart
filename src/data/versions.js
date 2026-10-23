@@ -271,14 +271,16 @@ function regroup(d, teamId, columns) {
 }
 
 /**
- * Appends a `{ reports }` column to a group. Use this rather than an `extras`
- * slot for anyone who has reports of their own: `extras` renders a bare card
- * and would silently drop them.
+ * Gives a person a team of their own, as another column of a group: their card,
+ * then a team pill under it (like Akshat's), then their reports. Use this rather
+ * than an `extras` slot for anyone who has reports of their own: `extras`
+ * renders a bare card and would silently drop them.
  */
-function addGroupColumn(d, leaderId, reports) {
+function addGroupTeam(d, leaderId, { id, name, head }) {
   const col = d.layout.columns.find((c) => c.group?.leader === leaderId)
-  if (!col) throw new Error(`addGroupColumn: no group for "${leaderId}"`)
-  col.group.columns.push({ reports, slim: true })
+  if (!col) throw new Error(`addGroupTeam: no group for "${leaderId}"`)
+  d.teams.push({ id, name, head })
+  col.group.columns.push({ team: id, slim: true })
 }
 
 /** Removes whichever `{ reports }` column of a group holds `id`. */
@@ -436,9 +438,10 @@ export const versions = [
         ['jessica-molloy', 'Associate BDR'],
       ])
 
-      // Jillian reports to Lainey, so she renders in Lainey's group instead —
-      // in a column of her own, which carries Joe along beneath her.
-      addGroupColumn(d, 'lainey-franks', ['jillian-tweet'])
+      // Jillian reports to Lainey, so she renders in Lainey's group instead — as
+      // the head of PALS Sales, a team of her own beside Marketing and Business
+      // operations, which carries Joe along beneath her.
+      addGroupTeam(d, 'lainey-franks', { id: 'pals-sales', name: 'PALS Sales', head: 'jillian-tweet' })
 
       // Open roles for Hopp's two groups: each is one card standing for several
       // hires, and sits at the foot of its group's column.

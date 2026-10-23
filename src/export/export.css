@@ -20,13 +20,6 @@ body:has(.gg-frame) {
   transform-origin: 0 0;
 }
 
-/* PALS is not a team in Version 1 — Jillian sits in Lainey's group — so it
-   takes that group's purple (see `team` in groups.js). */
-[data-team='pals'] {
-  --oc-team-bg: #e3dcf5;
-  --oc-team-fg: #574194;
-}
-
 /* ── Tighter than the chart ─────────────────────────────────────────────────
    A group has to fit 768x250, which scales its text down; the tighter it is,
    the less it scales. So cards are narrower and there is no team pill: the
