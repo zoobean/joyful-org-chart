@@ -375,8 +375,10 @@ export const versions = [
       retitle(d, 'jillian-tweet', 'National Sales Manager, PALS')
       move(d, 'joe-barrette', 'jillian-tweet')
 
-      // Cleo keeps her title and both Library Success Managers, under Shaun.
+      // Cleo keeps both Library Success Managers, under Shaun, as Manager of
+      // PAL Success Team.
       move(d, 'cleo-joyce', 'shaun-conway')
+      retitle(d, 'cleo-joyce', 'Manager of PAL Success Team')
 
       // Product Support moves from Kelly Hiser to Shaun. Moving Elizabeth
       // carries Camille, Jenny and Simon with her — they are her subtree.
@@ -530,8 +532,8 @@ export const versions = [
       // open seat is School Success Manager(s). orderReports checks every list
       // is complete.
       remove(d, 'emily-peterson')
-      retitle(d, 'lauren-hantzes', 'School Success Team Manager')
-      retitle(d, 'tammy-mcintyre', 'School Success Team Manager')
+      retitle(d, 'lauren-hantzes', 'Manager of School Success Team')
+      matchTitle(d, 'lauren-hantzes', ['tammy-mcintyre'])
       move(d, 'kelly-williams', 'lauren-hantzes')
       move(d, 'stella-bromley', 'tammy-mcintyre')
       addOpenRole(d, 'shaun-conway', {
