@@ -385,9 +385,9 @@ export const versions = [
       move(d, 'elizabeth-ross', 'shaun-conway')
 
       // Brooke's role is gone with no replacement. Simon stays in Product
-      // Support, moving up to Elizabeth, and Jenny reports to Kelly.
+      // Support, moving up to Camille, and Jenny reports to Kelly.
       remove(d, 'brooke-keene')
-      move(d, 'simon-desalvo', 'elizabeth-ross')
+      move(d, 'simon-desalvo', 'camille-perez')
       move(d, 'jenny-plummer', 'kelly-hiser')
       retitle(d, 'jenny-plummer', 'Product Operations Lead')
 
@@ -531,7 +531,16 @@ export const versions = [
       // are team managers, with Kelly W. and Stella moved under them; the one
       // open seat is School Success Manager(s). orderReports checks every list
       // is complete.
+      //
+      // Product Support: Rizz is a Senior Product Manager, with Camille as its
+      // Team Lead and Simon and the Product Support Specialist(s) under her.
       remove(d, 'emily-peterson')
+      retitle(d, 'elizabeth-ross', 'Senior Product Manager')
+      retitle(d, 'camille-perez', 'Product Support Team Lead')
+      addOpenRole(d, 'camille-perez', {
+        id: 'tbd-product-support-specialists',
+        title: 'Product Support Specialist(s)',
+      })
       retitle(d, 'lauren-hantzes', 'Manager of School Success Team')
       matchTitle(d, 'lauren-hantzes', ['tammy-mcintyre'])
       move(d, 'kelly-williams', 'lauren-hantzes')
@@ -552,7 +561,8 @@ export const versions = [
       orderReports(d, 'lauren-hantzes', ['danysha-ligon', 'hugh-burke', 'kelly-williams'])
       orderReports(d, 'tammy-mcintyre', ['alexandra-tolbert', 'stella-bromley', 'vickie-blankenship'])
       orderReports(d, 'cleo-joyce', ['heidi-kunkel', 'kat-gatcomb'])
-      orderReports(d, 'elizabeth-ross', ['camille-perez', 'simon-desalvo'])
+      orderReports(d, 'elizabeth-ross', ['camille-perez'])
+      orderReports(d, 'camille-perez', ['simon-desalvo', 'tbd-product-support-specialists'])
 
       // Client Success splits into two columns like Sales: the school success
       // leads and their open seat, then the two teams that moved in above.
