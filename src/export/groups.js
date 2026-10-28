@@ -27,7 +27,7 @@ const CS_COLUMNS = [
   ['tammy-mcintyre'],
   ['tbd-associate-ssm'],
   ['cleo-joyce'],
-  ['elizabeth-ross'],
+  ['camille-perez'],
 ]
 
 export const GROUPS = [
@@ -56,7 +56,7 @@ export const GROUPS = [
     id: 'product',
     leader: 'kelly-hiser',
     team: 'product',
-    columns: [['moni-barrette'], ['mike-kuzin', 'jenny-plummer', 'tbd-senior-product-manager']],
+    columns: [['moni-barrette'], ['mike-kuzin', 'jenny-plummer', 'elizabeth-ross']],
   },
   {
     id: 'engineering',

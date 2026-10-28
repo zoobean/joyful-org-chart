@@ -380,22 +380,18 @@ export const versions = [
       move(d, 'cleo-joyce', 'shaun-conway')
       retitle(d, 'cleo-joyce', 'Manager of PAL Success Team')
 
-      // Product Support moves from Kelly Hiser to Shaun. Moving Elizabeth
-      // carries Camille, Jenny and Simon with her — they are her subtree.
-      move(d, 'elizabeth-ross', 'shaun-conway')
-
-      // Brooke's role is gone with no replacement. Simon stays in Product
-      // Support, moving up to Camille, and Jenny reports to Kelly.
+      // Product Support moves from Kelly Hiser to Shaun, led by Camille with Simon
+      // under her (Simon moves up from Jenny; Camille has no reports of her own
+      // in the base data, so he is her whole team). Brooke's role is gone with no
+      // replacement, and Jenny reports to Kelly. Elizabeth stays in Product as the
+      // Senior Product Manager, last of Kelly's reports.
       remove(d, 'brooke-keene')
       move(d, 'simon-desalvo', 'camille-perez')
+      move(d, 'camille-perez', 'shaun-conway')
       move(d, 'jenny-plummer', 'kelly-hiser')
       retitle(d, 'jenny-plummer', 'Product Operations Lead')
-
-      addOpenRole(d, 'kelly-hiser', {
-        id: 'tbd-senior-product-manager',
-        title: 'Senior Product Manager',
-        note: NOW,
-      })
+      retitle(d, 'elizabeth-ross', 'Senior Product Manager')
+      orderReports(d, 'kelly-hiser', ['moni-barrette', 'mike-kuzin', 'jenny-plummer', 'elizabeth-ross'])
 
       // Lindsey joins Sales under Hopp himself. She rendered beside Business
       // operations as a card whose reporting line pointed at Lainey, so that
@@ -532,13 +528,15 @@ export const versions = [
       // open seat is School Success Manager(s). orderReports checks every list
       // is complete.
       //
-      // Product Support: Rizz is a Senior Product Manager, with Camille as its
-      // Team Lead and Simon and the Product Support Specialist(s) under her.
+      // Product Support: Camille is its Team Lead, reporting to Shaun, with Simon
+      // and the existing Product Support Specialist(s) under her. The specialists
+      // are people already on the team, so this is a TBD card for their names,
+      // not an open role: no hire note.
       remove(d, 'emily-peterson')
-      retitle(d, 'elizabeth-ross', 'Senior Product Manager')
       retitle(d, 'camille-perez', 'Product Support Team Lead')
-      addOpenRole(d, 'camille-perez', {
+      addReport(d, 'camille-perez', {
         id: 'tbd-product-support-specialists',
+        name: 'TBD',
         title: 'Product Support Specialist(s)',
       })
       retitle(d, 'lauren-hantzes', 'Manager of School Success Team')
@@ -556,19 +554,18 @@ export const versions = [
         'tammy-mcintyre',
         'tbd-associate-ssm',
         'cleo-joyce',
-        'elizabeth-ross',
+        'camille-perez',
       ])
       orderReports(d, 'lauren-hantzes', ['danysha-ligon', 'hugh-burke', 'kelly-williams'])
       orderReports(d, 'tammy-mcintyre', ['alexandra-tolbert', 'stella-bromley', 'vickie-blankenship'])
       orderReports(d, 'cleo-joyce', ['heidi-kunkel', 'kat-gatcomb'])
-      orderReports(d, 'elizabeth-ross', ['camille-perez'])
       orderReports(d, 'camille-perez', ['simon-desalvo', 'tbd-product-support-specialists'])
 
       // Client Success splits into two columns like Sales: the school success
       // leads and their open seat, then the two teams that moved in above.
       regroup(d, 'school-client-success', [
         ['lauren-hantzes', 'tammy-mcintyre', 'tbd-associate-ssm'],
-        ['cleo-joyce', 'elizabeth-ross'],
+        ['cleo-joyce', 'camille-perez'],
       ])
 
       // Lainey's department goes by a new name; the people and colors don't change.
