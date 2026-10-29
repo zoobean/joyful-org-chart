@@ -381,12 +381,13 @@ export const versions = [
       retitle(d, 'cleo-joyce', 'Manager of PAL Success Team')
 
       // Product Support moves from Kelly Hiser to Shaun, led by Camille with Simon
-      // under her (Simon moves up from Jenny; Camille has no reports of her own
-      // in the base data, so he is her whole team). Brooke's role is gone with no
-      // replacement, and Jenny reports to Kelly. Elizabeth stays in Product as the
-      // Senior Product Manager, last of Kelly's reports.
+      // and Amber under her (Simon moves up from Jenny, Amber over from Moni's
+      // team; Camille has no reports of her own in the base data). Brooke's role
+      // is gone with no replacement, and Jenny reports to Kelly. Elizabeth stays
+      // in Product as the Senior Product Manager, last of Kelly's reports.
       remove(d, 'brooke-keene')
       move(d, 'simon-desalvo', 'camille-perez')
+      move(d, 'amber-mitchell', 'camille-perez')
       move(d, 'camille-perez', 'shaun-conway')
       move(d, 'jenny-plummer', 'kelly-hiser')
       retitle(d, 'jenny-plummer', 'Product Operations Lead')
@@ -528,12 +529,14 @@ export const versions = [
       // open seat is School Success Manager(s). orderReports checks every list
       // is complete.
       //
-      // Product Support: Camille is its Team Lead, reporting to Shaun, with Simon
-      // and the existing Product Support Specialist(s) under her. The specialists
-      // are people already on the team, so this is a TBD card for their names,
-      // not an open role: no hire note.
+      // Product Support: Camille is its Team Lead, reporting to Shaun, with Amber
+      // and Simon (both Product Support Managers) and the existing Product Support
+      // Specialist(s) under her. The specialists are people already on the team,
+      // so that is a TBD card for their names, not an open role: no hire note.
       remove(d, 'emily-peterson')
       retitle(d, 'camille-perez', 'Product Support Team Lead')
+      retitle(d, 'amber-mitchell', 'Product Support Manager')
+      retitle(d, 'simon-desalvo', 'Product Support Manager')
       addReport(d, 'camille-perez', {
         id: 'tbd-product-support-specialists',
         name: 'TBD',
@@ -559,7 +562,11 @@ export const versions = [
       orderReports(d, 'lauren-hantzes', ['danysha-ligon', 'hugh-burke', 'kelly-williams'])
       orderReports(d, 'tammy-mcintyre', ['alexandra-tolbert', 'stella-bromley', 'vickie-blankenship'])
       orderReports(d, 'cleo-joyce', ['heidi-kunkel', 'kat-gatcomb'])
-      orderReports(d, 'camille-perez', ['simon-desalvo', 'tbd-product-support-specialists'])
+      orderReports(d, 'camille-perez', [
+        'amber-mitchell',
+        'simon-desalvo',
+        'tbd-product-support-specialists',
+      ])
 
       // Client Success splits into two columns like Sales: the school success
       // leads and their open seat, then the two teams that moved in above.
