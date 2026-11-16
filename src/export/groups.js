@@ -1,5 +1,5 @@
-// The presentation graphics: one per group, cut from Version 1 unless a group
-// names another `version`.
+// The presentation graphics: one per group, cut from the chart — or from its
+// nameless copy (roles only) when a group sets `nameless: true`.
 //
 // A graphic is a group's leader with their direct reports laid out in columns,
 // the same shape as Dave Hopp's group on the chart. Each column lists the
@@ -16,11 +16,23 @@
 //   `fit: 'content'` — no 768x250 frame: the image is cut to the graphic itself,
 //             at the chart's own card size.
 // `people` changes how particular cards read in this graphic only — a `name`
-// and/or `title` per person id — without touching the chart's versions.
+// and/or `title` per person id — without touching the chart itself.
 // And `center` puts the leader in the middle above the row of reports, with a
 // drop into the top of each, rather than at the left.
+// `frame` ({ width, height }) cuts a graphic to a slot other than FRAME.
 
 export const FRAME = { width: 768, height: 250 }
+
+// The sales graphic's people, shared by the full-width graphic and the tall one.
+const SALES_PEOPLE = {
+  'coley-martin': { name: 'Coley Martin' },
+  'don-giacomini': { name: 'Don Giacomini' },
+  'lauren-brami': { name: 'Lauren Brami', title: 'Business Development Team Lead - Buildings' },
+  'michael-kideckel': {
+    name: 'Michael Kideckel',
+    title: 'Business Development Team Lead - Districts',
+  },
+}
 
 const CS_COLUMNS = [
   ['lauren-hantzes'],
@@ -80,24 +92,33 @@ export const GROUPS = [
   },
   {
     id: 'sales',
-    // The sales slide uses the nameless Version 2: roles only, no names — except
+    // The sales slide uses the nameless chart: roles only, no names — except
     // the four team heads, who are named, and the two BDR leads, whose titles say
     // which side they lead.
-    version: 'v2',
-    people: {
-      'coley-martin': { name: 'Coley Martin' },
-      'don-giacomini': { name: 'Don Giacomini' },
-      'lauren-brami': { name: 'Lauren Brami', title: 'Business Development Team Lead - Buildings' },
-      'michael-kideckel': {
-        name: 'Michael Kideckel',
-        title: 'Business Development Team Lead - Districts',
-      },
-    },
+    nameless: true,
+    people: SALES_PEOPLE,
     leader: 'dave-hopp',
     team: 'school-sales',
     columns: [
       ['coley-martin'],
       ['don-giacomini'],
+      ['lauren-brami'],
+      ['michael-kideckel'],
+      ['lindsey-hill', 'tbd-account-executives', 'tbd-business-development-reps'],
+    ],
+  },
+  {
+    // The sales graphic for a two-thirds-width slot beside text (494x250): the
+    // same people, with the two regional managers' teams stacked in one column so
+    // it comes out taller.
+    id: 'sales-tall',
+    nameless: true,
+    people: SALES_PEOPLE,
+    leader: 'dave-hopp',
+    team: 'school-sales',
+    frame: { width: 494, height: 250 },
+    columns: [
+      ['coley-martin', 'don-giacomini'],
       ['lauren-brami'],
       ['michael-kideckel'],
       ['lindsey-hill', 'tbd-account-executives', 'tbd-business-development-reps'],
@@ -117,9 +138,9 @@ export const GROUPS = [
     columns: CS_COLUMNS,
   },
   {
-    // The same graphic from the nameless Version 2.
+    // The same graphic from the nameless chart.
     id: 'cs-nameless',
-    version: 'v2',
+    nameless: true,
     leader: 'shaun-conway',
     team: 'school-client-success',
     columns: CS_COLUMNS,

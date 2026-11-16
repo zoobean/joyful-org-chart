@@ -4,7 +4,7 @@ import { ReportNode } from '../components/TeamColumn.jsx'
 import { box, curvedBusPath } from '../components/ConnectorLayer.jsx'
 import { OrgDataContext, useOrgData } from '../data/orgContext.js'
 import { createOrgData } from '../data/selectors.js'
-import { getVersion } from '../data/versions.js'
+import { buildNamelessOrg, buildOrg } from '../data/versions.js'
 import { FRAME, GROUPS } from './groups.js'
 import '../components/ConnectorLayer.css'
 import '../components/OrgChart.css'
@@ -91,16 +91,18 @@ function ExportGroup({ spec, register }) {
 }
 
 // One group, drawn the way the chart draws it and then scaled to fit the frame.
-// The graphic is Version 1's data unless the group names another version. Once
+// The graphic is the chart's data, or its nameless copy when the group says so. Once
 // the web font has loaded and everything is measured, `window.__exportReady`
 // flips to true — that is what the export script waits for before taking its
 // picture.
 export default function GroupGraphic({ id }) {
   const spec = GROUPS.find((g) => g.id === id)
   if (!spec) throw new Error(`No group graphic "${id}"`)
+  // A group can name its own `frame` for a slot that isn't 768x250.
+  const frameSize = spec.frame ?? FRAME
 
   const data = useMemo(() => {
-    const d = getVersion(spec.version ?? 'v1').build()
+    const d = (spec.nameless ? buildNamelessOrg : buildOrg)()
     for (const [personId, patch] of Object.entries(spec.people ?? {})) {
       Object.assign(findPerson(d.org, personId), patch)
     }
@@ -131,8 +133,8 @@ export default function GroupGraphic({ id }) {
         const height = stage.offsetHeight
         const scale = Math.min(
           MAX_SCALE,
-          (FRAME.width - PADDING * 2) / width,
-          (FRAME.height - PADDING * 2) / height
+          (frameSize.width - PADDING * 2) / width,
+          (frameSize.height - PADDING * 2) / height
         )
         return { width, height, scale }
       }
@@ -176,7 +178,7 @@ export default function GroupGraphic({ id }) {
       // The size the picture is cut to: the frame, or the graphic plus a margin.
       const frame = content
         ? { width: best.width + PADDING * 2, height: best.height + PADDING * 2 }
-        : FRAME
+        : frameSize
       window.__exportSize = frame
       setLayout({
         paths,
@@ -195,7 +197,7 @@ export default function GroupGraphic({ id }) {
   }, [spec])
 
   const scale = layout?.scale ?? 1
-  const frame = layout?.frame ?? FRAME
+  const frame = layout?.frame ?? frameSize
   const x = layout ? (frame.width - layout.width * scale) / 2 : 0
   const y = layout ? (frame.height - layout.height * scale) / 2 : 0
 

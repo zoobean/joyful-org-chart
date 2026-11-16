@@ -3,10 +3,9 @@ import { useOrgData } from '../data/orgContext.js'
 import './ConnectorLayer.css'
 
 // ── Which nodes each bus connects (derived from the layout) ──────────────────
-// Derived per dataset rather than once at module scope: the chart can render
-// any of several org versions (see versions.js), and a version may add, drop,
-// or re-parent whole columns — so the bus topology has to be rebuilt whenever
-// the active layout changes.
+// Derived per dataset rather than once at module scope: the layout is org.js's
+// with edits applied (see versions.js), which can add, drop, or re-parent whole
+// columns — so the bus topology is derived from the active layout, not assumed.
 function busTopology(layout, getTeam) {
   // The head anchor for a layout column: a team's head, or a group's leader.
   const columnAnchor = (col) => (col.group ? col.group.leader : getTeam(col.team).head)

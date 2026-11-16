@@ -1,22 +1,21 @@
 // ─────────────────────────────────────────────────────────────────────────
-// Proposed org versions — "what if we reorganized like this?"
+// The org chart.
 //
-// The chart normally renders org.js exactly as written. A version is that
-// same data with a short list of edits applied on top, so org.js stays the
-// single source of truth and a version only ever states its own DIFFERENCES.
-// Nothing here mutates the base data: every build() starts from a deep clone.
+// org.js holds the base data. The chart is that data with a list of edits
+// applied on top (buildOrg), so org.js stays the starting point and this file
+// states every DIFFERENCE from it in one readable place. Nothing here mutates
+// the base data: buildOrg starts from a deep clone.
 //
-// Versions are only reachable behind the versions password (see
-// PasswordGate) — the default view is, and stays, the current chart.
+// There is one chart. buildNamelessOrg derives a roles-only copy of it for the
+// presentation graphics (src/export); the app itself never renders that one.
 //
-// TO ADD A VERSION: append an entry below with a `name` and a `build()` that
-// applies the helpers to a fresh clone. The picker lists whatever is here.
+// TO CHANGE THE CHART: add to or edit the helper calls in buildOrg().
 // ─────────────────────────────────────────────────────────────────────────
 import { org as baseOrg, teams as baseTeams, layout as baseLayout } from './org.js'
 
 const clonePerson = (n) => ({ ...n, reports: n.reports.map(clonePerson) })
 
-/** A fresh, fully detached copy of the base dataset for a version to edit. */
+/** A fresh, fully detached copy of the base dataset for buildOrg to edit. */
 const cloneBase = () => ({
   org: clonePerson(baseOrg),
   teams: baseTeams.map((t) => ({ ...t })),
@@ -354,264 +353,251 @@ function renderAfter(d, leaderId, afterId, id) {
   col.reports.splice(col.reports.indexOf(afterId) + 1, 0, id)
 }
 
-// ── The versions ───────────────────────────────────────────────────────────
-export const versions = [
-  {
-    id: 'current',
-    name: 'Current Org Chart',
-    build: cloneBase,
-  },
-  {
-    id: 'v1',
-    name: 'Version 1',
-    // PAL is dissolved. Its three members move under Sales and Client
-    // Success; Ian Singer, who headed it, leaves the chart with the team.
-    build() {
-      const d = cloneBase()
+// ── The chart ──────────────────────────────────────────────────────────────
+/**
+ * PAL is dissolved. Its three members move under Sales and Client
+ * Success; Ian Singer, who headed it, leaves the chart with the team.
+ */
+export function buildOrg() {
+  const d = cloneBase()
 
-      // Jillian takes the PAL book as a sales manager under Hopp, with Joe
-      // now reporting to her rather than alongside her.
-      move(d, 'jillian-tweet', 'lainey-franks')
-      retitle(d, 'jillian-tweet', 'National Sales Manager, PALS')
-      move(d, 'joe-barrette', 'jillian-tweet')
+  // Jillian takes the PAL book as a sales manager under Hopp, with Joe
+  // now reporting to her rather than alongside her.
+  move(d, 'jillian-tweet', 'lainey-franks')
+  retitle(d, 'jillian-tweet', 'National Sales Manager, PALS')
+  move(d, 'joe-barrette', 'jillian-tweet')
 
-      // Cleo keeps both Library Success Managers, under Shaun, as Manager of
-      // PAL Success Team.
-      move(d, 'cleo-joyce', 'shaun-conway')
-      retitle(d, 'cleo-joyce', 'Manager of PAL Success Team')
+  // Cleo keeps both Library Success Managers, under Shaun, as Manager of
+  // PAL Success Team.
+  move(d, 'cleo-joyce', 'shaun-conway')
+  retitle(d, 'cleo-joyce', 'Manager of PAL Success Team')
 
-      // Product Support moves from Kelly Hiser to Shaun, led by Camille with Simon
-      // and Amber under her (Simon moves up from Jenny, Amber over from Moni's
-      // team; Camille has no reports of her own in the base data). Brooke's role
-      // is gone with no replacement, and Jenny reports to Kelly. Elizabeth stays
-      // in Product as the Senior Product Manager, last of Kelly's reports.
-      remove(d, 'brooke-keene')
-      move(d, 'simon-desalvo', 'camille-perez')
-      move(d, 'amber-mitchell', 'camille-perez')
-      move(d, 'camille-perez', 'shaun-conway')
-      move(d, 'jenny-plummer', 'kelly-hiser')
-      retitle(d, 'jenny-plummer', 'Product Operations Lead')
-      retitle(d, 'elizabeth-ross', 'Senior Product Manager')
-      orderReports(d, 'kelly-hiser', ['moni-barrette', 'mike-kuzin', 'jenny-plummer', 'elizabeth-ross'])
+  // Product Support moves from Kelly Hiser to Shaun, led by Camille with Simon
+  // and Amber under her (Simon moves up from Jenny, Amber over from Moni's
+  // team; Camille has no reports of her own in the base data). Brooke's role
+  // is gone with no replacement, and Jenny reports to Kelly. Elizabeth stays
+  // in Product as the Senior Product Manager, last of Kelly's reports.
+  remove(d, 'brooke-keene')
+  move(d, 'simon-desalvo', 'camille-perez')
+  move(d, 'amber-mitchell', 'camille-perez')
+  move(d, 'camille-perez', 'shaun-conway')
+  move(d, 'jenny-plummer', 'kelly-hiser')
+  retitle(d, 'jenny-plummer', 'Product Operations Lead')
+  retitle(d, 'elizabeth-ross', 'Senior Product Manager')
+  orderReports(d, 'kelly-hiser', ['moni-barrette', 'mike-kuzin', 'jenny-plummer', 'elizabeth-ross'])
 
-      // Lindsey joins Sales under Hopp himself. She rendered beside Business
-      // operations as a card whose reporting line pointed at Lainey, so that
-      // placement goes too — otherwise she would draw twice. Reporting to the
-      // group leader, she needs her own entry in one of his columns.
-      move(d, 'lindsey-hill', 'dave-hopp')
-      retitle(d, 'lindsey-hill', 'Principal Account Executive')
-      unrender(d, 'lainey-franks', ['lindsey-hill'])
+  // Lindsey joins Sales under Hopp himself. She rendered beside Business
+  // operations as a card whose reporting line pointed at Lainey, so that
+  // placement goes too — otherwise she would draw twice. Reporting to the
+  // group leader, she needs her own entry in one of his columns.
+  move(d, 'lindsey-hill', 'dave-hopp')
+  retitle(d, 'lindsey-hill', 'Principal Account Executive')
+  unrender(d, 'lainey-franks', ['lindsey-hill'])
 
-      // ── Sales ────────────────────────────────────────────────────────────
-      // The finished shape, stated outright rather than as a series of edits,
-      // so these read the way the two columns do on screen. Everyone in Hopp's
-      // org is placed explicitly here, which is what lets the column lists at
-      // the end be complete — a group renders only the cards it names.
-      retitle(d, 'coley-martin', 'Regional Sales Manager')
-      retitle(d, 'don-giacomini', 'Regional Sales Manager')
+  // ── Sales ────────────────────────────────────────────────────────────
+  // The finished shape, stated outright rather than as a series of edits,
+  // so these read the way the two columns do on screen. Everyone in Hopp's
+  // org is placed explicitly here, which is what lets the column lists at
+  // the end be complete — a group renders only the cards it names.
+  retitle(d, 'coley-martin', 'Regional Sales Manager')
+  retitle(d, 'don-giacomini', 'Regional Sales Manager')
 
-      // Don takes the Regional Sales Manager seat and Bryana the Senior Account
-      // Executive one, so both go back to their own names. Beth and Bryana have
-      // traded teams: Beth is on Coley's, Bryana on Don's, each keeping her title.
-      assignTeam(d, 'coley-martin', [
-        ['chelsea-mccoy', 'Senior Account Executive'],
-        ['beth-halaz', 'Account Executive'],
-        ['jessica-fulton', 'Account Executive'],
-      ])
-      assignTeam(d, 'don-giacomini', [
-        ['becca-traxler', 'Account Executive'],
-        ['bryana-snyder', 'Senior Account Executive'],
-        ['amanda-taylor', 'Associate Account Executive'],
-      ])
-      assignTeam(d, 'jillian-tweet', [['joe-barrette', 'Account Executive']])
-      assignTeam(d, 'lauren-brami', [
-        ['haven-gotham', 'Senior BDR'],
-        ['andrea-mullon', 'BDR'],
-        ['esmy-clavel', 'BDR'],
-        ['steven-dimiceli', 'BDR'],
-      ])
-      assignTeam(d, 'michael-kideckel', [
-        ['ciera-baker', 'BDR'],
-        ['amanda-garner', 'Associate BDR'],
-        ['akua-peprah', 'Associate BDR'],
-        ['jessica-molloy', 'Associate BDR'],
-      ])
+  // Don takes the Regional Sales Manager seat and Bryana the Senior Account
+  // Executive one, so both go back to their own names. Beth and Bryana have
+  // traded teams: Beth is on Coley's, Bryana on Don's, each keeping her title.
+  assignTeam(d, 'coley-martin', [
+    ['chelsea-mccoy', 'Senior Account Executive'],
+    ['beth-halaz', 'Account Executive'],
+    ['jessica-fulton', 'Account Executive'],
+  ])
+  assignTeam(d, 'don-giacomini', [
+    ['becca-traxler', 'Account Executive'],
+    ['bryana-snyder', 'Senior Account Executive'],
+    ['amanda-taylor', 'Associate Account Executive'],
+  ])
+  assignTeam(d, 'jillian-tweet', [['joe-barrette', 'Account Executive']])
+  assignTeam(d, 'lauren-brami', [
+    ['haven-gotham', 'Senior BDR'],
+    ['andrea-mullon', 'BDR'],
+    ['esmy-clavel', 'BDR'],
+    ['steven-dimiceli', 'BDR'],
+  ])
+  assignTeam(d, 'michael-kideckel', [
+    ['ciera-baker', 'BDR'],
+    ['amanda-garner', 'Associate BDR'],
+    ['akua-peprah', 'Associate BDR'],
+    ['jessica-molloy', 'Associate BDR'],
+  ])
 
-      // Jillian reports to Lainey, so she renders in Lainey's group instead — as
-      // the head of PALS Sales, a team of her own beside Marketing and Business
-      // operations, which carries Joe along beneath her.
-      addGroupTeam(d, 'lainey-franks', { id: 'pals-sales', name: 'PALS Sales', head: 'jillian-tweet' })
+  // Jillian reports to Lainey, so she renders in Lainey's group instead — as
+  // the head of PALS Sales, a team of her own beside Marketing and Business
+  // operations, which carries Joe along beneath her.
+  addGroupTeam(d, 'lainey-franks', { id: 'pals-sales', name: 'PALS Sales', head: 'jillian-tweet' })
 
-      // Open roles for Hopp's two groups: each is one card standing for several
-      // hires, and sits at the foot of its group's column.
-      addOpenRole(d, 'dave-hopp', {
-        id: 'tbd-account-executives',
-        title: 'Account Executive(s)',
-        note: TBD_2026_OR_2027,
-      })
-      addOpenRole(d, 'dave-hopp', {
-        id: 'tbd-business-development-reps',
-        title: 'Business Development Representative(s)',
-        note: TBD_2027,
-      })
+  // Open roles for Hopp's two groups: each is one card standing for several
+  // hires, and sits at the foot of its group's column.
+  addOpenRole(d, 'dave-hopp', {
+    id: 'tbd-account-executives',
+    title: 'Account Executive(s)',
+    note: TBD_2026_OR_2027,
+  })
+  addOpenRole(d, 'dave-hopp', {
+    id: 'tbd-business-development-reps',
+    title: 'Business Development Representative(s)',
+    note: TBD_2027,
+  })
 
-      setGroupColumns(d, 'dave-hopp', [
-        ['coley-martin', 'don-giacomini', 'lindsey-hill', 'tbd-account-executives'],
-        ['lauren-brami', 'michael-kideckel', 'tbd-business-development-reps'],
-      ])
+  setGroupColumns(d, 'dave-hopp', [
+    ['coley-martin', 'don-giacomini', 'lindsey-hill', 'tbd-account-executives'],
+    ['lauren-brami', 'michael-kideckel', 'tbd-business-development-reps'],
+  ])
 
-      // Only now is Ian childless and safe to drop without taking anyone with him.
-      remove(d, 'ian-singer')
-      dropTeam(d, 'pal')
+  // Only now is Ian childless and safe to drop without taking anyone with him.
+  remove(d, 'ian-singer')
+  dropTeam(d, 'pal')
 
-      retitle(d, 'lilly-sundell-thomas', 'Marketing Manager, Product & Engagement')
+  // Titles as they stand today (Kelly Burke, 2026-11-02).
+  retitle(d, 'lilly-sundell-thomas', 'Marketing Manager, Product & Community')
 
-      // Brittinee's and Paktra's roles are gone with no replacements.
-      remove(d, 'brittinee-phillips')
-      remove(d, 'paktra-lynch')
+  // Brittinee's and Paktra's roles are gone with no replacements.
+  remove(d, 'brittinee-phillips')
+  remove(d, 'paktra-lynch')
 
-      addOpenRole(d, 'kelly-burke', {
-        id: 'tbd-marketing-manager-community-events',
-        title: 'Marketing Manager',
-        note: NOW,
-      })
+  addOpenRole(d, 'kelly-burke', {
+    id: 'tbd-marketing-manager-community-events',
+    title: 'Marketing Manager, Events & Operations',
+    note: NOW,
+  })
 
-      addOpenRole(d, 'akshat-khandelwal', {
-        id: 'tbd-finance-controller',
-        title: 'Finance Controller',
-        note: NOW,
-      })
-      addOpenRole(d, 'akshat-khandelwal', {
-        id: 'tbd-junior-financial-operations',
-        title: 'Junior Financial Operations',
-        note: LATER,
-      })
+  addOpenRole(d, 'akshat-khandelwal', {
+    id: 'tbd-finance-controller',
+    title: 'Finance Controller',
+    note: NOW,
+  })
+  addOpenRole(d, 'akshat-khandelwal', {
+    id: 'tbd-junior-financial-operations',
+    title: 'Junior Financial Operations',
+    note: LATER,
+  })
 
-      // ── Engineering ──────────────────────────────────────────────────────
-      // Stated as its finished shape. Everyone keeps their existing title.
-      // Rachel's role is removed outright. orderReports checks each list is
-      // complete, so anyone left out of this outline fails here instead of
-      // dropping off the chart.
-      remove(d, 'rachel-mcgrane')
+  // ── Engineering ──────────────────────────────────────────────────────
+  // Stated as its finished shape. Everyone keeps their existing title.
+  // Rachel's role is removed outright. orderReports checks each list is
+  // complete, so anyone left out of this outline fails here instead of
+  // dropping off the chart.
+  remove(d, 'rachel-mcgrane')
 
-      // Antonio is an Engineering Manager with the whole engineering team under
-      // him.
-      retitle(d, 'antonio-chavez', 'Engineering Manager')
-      move(d, 'alejandro-zaizar', 'antonio-chavez')
-      move(d, 'vincent-mendiola', 'antonio-chavez')
-      move(d, 'armando-duran', 'antonio-chavez')
-      move(d, 'josh-joson', 'antonio-chavez')
+  // Antonio is an Engineering Manager with the whole engineering team under
+  // him.
+  retitle(d, 'antonio-chavez', 'Engineering Manager')
+  move(d, 'alejandro-zaizar', 'antonio-chavez')
+  move(d, 'vincent-mendiola', 'antonio-chavez')
+  move(d, 'armando-duran', 'antonio-chavez')
+  move(d, 'josh-joson', 'antonio-chavez')
 
-      addOpenRole(d, 'tyler-ewing', {
-        id: 'tbd-associate-engineer',
-        title: 'Associate Engineer',
-        note: NOW,
-      })
-      addOpenRole(d, 'tyler-ewing', {
-        id: 'tbd-senior-engineer',
-        title: 'Senior Engineer',
-        note: LATER,
-      })
+  addOpenRole(d, 'tyler-ewing', {
+    id: 'tbd-associate-engineer',
+    title: 'Associate Engineer',
+    note: NOW,
+  })
+  addOpenRole(d, 'tyler-ewing', {
+    id: 'tbd-senior-engineer',
+    title: 'Senior Engineer',
+    note: LATER,
+  })
 
-      orderReports(d, 'tyler-ewing', [
-        'antonio-chavez',
-        'mike-berse',
-        'jade-ornelas',
-        'josh-oiknine',
-        'tbd-associate-engineer',
-        'tbd-senior-engineer',
-      ])
-      orderReports(d, 'antonio-chavez', ['alejandro-zaizar', 'vincent-mendiola', 'armando-duran', 'josh-joson'])
+  orderReports(d, 'tyler-ewing', [
+    'antonio-chavez',
+    'mike-berse',
+    'jade-ornelas',
+    'josh-oiknine',
+    'tbd-associate-engineer',
+    'tbd-senior-engineer',
+  ])
+  orderReports(d, 'antonio-chavez', ['alejandro-zaizar', 'vincent-mendiola', 'armando-duran', 'josh-joson'])
 
-      // ── Client Success ───────────────────────────────────────────────────
-      // Stated as its finished shape. Emily's role is gone; the two team leads
-      // are team managers, with Kelly W. and Stella moved under them; the one
-      // open seat is School Success Manager(s). orderReports checks every list
-      // is complete.
-      //
-      // Product Support: Camille is its Team Lead, reporting to Shaun, with Amber
-      // and Simon (both Product Support Managers) and the existing Product Support
-      // Specialist(s) under her. The specialists are people already on the team,
-      // so that is a TBD card for their names, not an open role: no hire note.
-      remove(d, 'emily-peterson')
-      retitle(d, 'camille-perez', 'Product Support Team Lead')
-      retitle(d, 'amber-mitchell', 'Product Support Manager')
-      retitle(d, 'simon-desalvo', 'Product Support Manager')
-      addReport(d, 'camille-perez', {
-        id: 'tbd-product-support-specialists',
-        name: 'TBD',
-        title: 'Product Support Specialist(s)',
-      })
-      retitle(d, 'lauren-hantzes', 'Manager of School Success Team')
-      matchTitle(d, 'lauren-hantzes', ['tammy-mcintyre'])
-      move(d, 'kelly-williams', 'lauren-hantzes')
-      move(d, 'stella-bromley', 'tammy-mcintyre')
-      addOpenRole(d, 'shaun-conway', {
-        id: 'tbd-associate-ssm',
-        title: 'Associate School Success Manager(s)',
-        note: NOW,
-      })
+  // ── Client Success ───────────────────────────────────────────────────
+  // Stated as its finished shape. Emily's role is gone; the two team leads
+  // are team managers, with Kelly W. and Stella moved under them; the one
+  // open seat is School Success Manager(s). orderReports checks every list
+  // is complete.
+  //
+  // Product Support: Camille is its Team Lead, reporting to Shaun, with Amber
+  // and Simon (both Product Support Managers) and the existing Product Support
+  // Specialist(s) under her. The specialists are people already on the team,
+  // so that is a TBD card for their names, not an open role: no hire note.
+  remove(d, 'emily-peterson')
+  retitle(d, 'camille-perez', 'Product Support Team Lead')
+  retitle(d, 'amber-mitchell', 'Product Support Manager')
+  retitle(d, 'simon-desalvo', 'Product Support Manager')
+  addReport(d, 'camille-perez', {
+    id: 'tbd-product-support-specialists',
+    name: 'TBD',
+    title: 'Product Support Specialist(s)',
+  })
+  retitle(d, 'lauren-hantzes', 'Manager of School Success Team')
+  matchTitle(d, 'lauren-hantzes', ['tammy-mcintyre'])
+  move(d, 'kelly-williams', 'lauren-hantzes')
+  move(d, 'stella-bromley', 'tammy-mcintyre')
+  addOpenRole(d, 'shaun-conway', {
+    id: 'tbd-associate-ssm',
+    title: 'Associate School Success Manager(s)',
+    note: NOW,
+  })
 
-      orderReports(d, 'shaun-conway', [
-        'lauren-hantzes',
-        'tammy-mcintyre',
-        'tbd-associate-ssm',
-        'cleo-joyce',
-        'camille-perez',
-      ])
-      orderReports(d, 'lauren-hantzes', ['danysha-ligon', 'hugh-burke', 'kelly-williams'])
-      orderReports(d, 'tammy-mcintyre', ['alexandra-tolbert', 'stella-bromley', 'vickie-blankenship'])
-      orderReports(d, 'cleo-joyce', ['heidi-kunkel', 'kat-gatcomb'])
-      orderReports(d, 'camille-perez', [
-        'amber-mitchell',
-        'simon-desalvo',
-        'tbd-product-support-specialists',
-      ])
+  orderReports(d, 'shaun-conway', [
+    'lauren-hantzes',
+    'tammy-mcintyre',
+    'tbd-associate-ssm',
+    'cleo-joyce',
+    'camille-perez',
+  ])
+  orderReports(d, 'lauren-hantzes', ['danysha-ligon', 'hugh-burke', 'kelly-williams'])
+  orderReports(d, 'tammy-mcintyre', ['alexandra-tolbert', 'stella-bromley', 'vickie-blankenship'])
+  orderReports(d, 'cleo-joyce', ['heidi-kunkel', 'kat-gatcomb'])
+  orderReports(d, 'camille-perez', [
+    'amber-mitchell',
+    'simon-desalvo',
+    'tbd-product-support-specialists',
+  ])
 
-      // Client Success splits into two columns like Sales: the school success
-      // leads and their open seat, then the two teams that moved in above.
-      regroup(d, 'school-client-success', [
-        ['lauren-hantzes', 'tammy-mcintyre', 'tbd-associate-ssm'],
-        ['cleo-joyce', 'camille-perez'],
-      ])
+  // Client Success splits into two columns like Sales: the school success
+  // leads and their open seat, then the two teams that moved in above.
+  regroup(d, 'school-client-success', [
+    ['lauren-hantzes', 'tammy-mcintyre', 'tbd-associate-ssm'],
+    ['cleo-joyce', 'camille-perez'],
+  ])
 
-      // Lainey's department goes by a new name; the people and colors don't change.
-      renameTeam(d, 'business-optimization', 'Growth & Operations')
+  // Lainey's department goes by a new name; the people and colors don't change.
+  renameTeam(d, 'business-optimization', 'Growth & Operations')
 
-      // Developer is Engineer in this version, wherever it appears. This is what
-      // reaches the base-data titles (Vincent, Armando), which are not edited
-      // directly because the current chart keeps them.
-      replaceWordInTitles(d, 'Developer', 'Engineer')
+  // Developer is Engineer in this version, wherever it appears. This is what
+  // reaches the base-data titles (Vincent, Armando), which are not edited
+  // directly because the base data keeps them.
+  replaceWordInTitles(d, 'Developer', 'Engineer')
 
-      return d
-    },
-  },
-  {
-    id: 'v2',
-    name: 'Version 2',
-    // Version 1, except School Sales and Client Success show roles only: every
-    // name under Hopp and under Shaun is removed, with all the titles and the
-    // structure left exactly as they are. Jillian and Joe report to Lainey here,
-    // as in Version 1, so they are not part of School Sales and keep their names. Built ON Version 1 rather than
-    // copied from it, so Version 1's own definition is untouched — but later
-    // edits to Version 1 flow through to this one.
-    build() {
-      const d = versions.find((v) => v.id === 'v1').build()
+  return d
+}
 
-      blankNamesUnder(d, 'dave-hopp')
-      blankNamesUnder(d, 'shaun-conway')
+/**
+ * The chart with School Sales and Client Success showing roles only, for the
+ * presentation graphics: every name under Hopp and under Shaun is removed, with
+ * all the titles and the structure left exactly as they are. Jillian and Joe
+ * report to Lainey, so they are not part of School Sales and keep their names.
+ * Built ON buildOrg() rather than copied from it, so later edits to the chart
+ * flow through to this one. Only src/export uses it; the app never does.
+ */
+export function buildNamelessOrg() {
+  const d = buildOrg()
 
-      // Plain titles: no seniority or qualifier. Exact-match swaps, applied
-      // chart-wide, so Principal Account Executive and Jillian's PALS title stay.
-      retitleAll(d, 'Senior Account Executive', 'Account Executive')
-      retitleAll(d, 'Associate Account Executive', 'Account Executive')
-      retitleAll(d, 'Senior BDR', 'BDR')
-      retitleAll(d, 'Associate BDR', 'BDR')
-      return d
-    },
-  },
-]
+  blankNamesUnder(d, 'dave-hopp')
+  blankNamesUnder(d, 'shaun-conway')
 
-export const DEFAULT_VERSION_ID = 'current'
-
-export const getVersion = (id) => versions.find((v) => v.id === id) || versions[0]
+  // Plain titles: no seniority or qualifier. Exact-match swaps, applied
+  // chart-wide, so Principal Account Executive and Jillian's PALS title stay.
+  retitleAll(d, 'Senior Account Executive', 'Account Executive')
+  retitleAll(d, 'Associate Account Executive', 'Account Executive')
+  retitleAll(d, 'Senior BDR', 'BDR')
+  retitleAll(d, 'Associate BDR', 'BDR')
+  return d
+}

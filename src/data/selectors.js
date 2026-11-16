@@ -1,10 +1,11 @@
 // Derived, read-only indexes over an org dataset. Pure — no rendering here.
 //
-// A FACTORY rather than module-level singletons: the chart can render any of
-// several org versions (see versions.js), each its own `{ org, teams, layout }`
-// triple, so the indexes have to be built per dataset instead of once from the
-// base import. Components reach the active set through the org context
-// (orgContext.js) rather than importing these directly.
+// A FACTORY rather than module-level singletons: the chart's data is built by
+// versions.js on top of org.js, and the graphics export builds a nameless copy
+// beside it — each its own `{ org, teams, layout }` triple, so the indexes have
+// to be built per dataset instead of once from the base import. Components reach
+// the active set through the org context (orgContext.js) rather than importing
+// these directly.
 export function createOrgData({ org, teams, layout }) {
   const personById = new Map()
   const managerById = new Map()

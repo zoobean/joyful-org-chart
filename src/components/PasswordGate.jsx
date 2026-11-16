@@ -1,46 +1,33 @@
 import { useState } from 'react'
 import './PasswordGate.css'
 
-// Two ways in, and the password decides what you get:
-//   Beans → the current chart, exactly as it stands. No version controls.
-//   Stack → the same chart plus a picker for the proposed re-org versions.
-// Anyone with the everyday password sees no hint that the versions exist.
-const MODES = {
-  Beans: 'current',
-  Stack: 'versions',
-}
+// Either password unlocks the chart. "Stack" used to add a version picker; with
+// one chart left both do the same thing, and both stay valid so nobody who
+// knows the old one is locked out.
+const PASSWORDS = ['Beans', 'Stack']
 
 const SESSION_KEY = 'oc-unlocked'
 
-// The stored value is the MODE, so a reload keeps you in the same view. '1' is
-// what earlier builds wrote before there were two modes; it reads as 'current'
-// so existing sessions stay unlocked rather than being bounced to the prompt.
-const readStoredMode = () => {
-  const stored = sessionStorage.getItem(SESSION_KEY)
-  if (stored === '1') return 'current'
-  return Object.values(MODES).includes(stored) ? stored : null
-}
+// Earlier builds stored the unlocked MODE ('current' or 'versions'), and before
+// that '1'. Any of them still reads as unlocked, so a session left open across a
+// deploy isn't bounced back to the prompt. New unlocks keep writing 'current'.
+const UNLOCKED = 'current'
+const STORED_UNLOCKED = ['1', UNLOCKED, 'versions']
+const readUnlocked = () => STORED_UNLOCKED.includes(sessionStorage.getItem(SESSION_KEY))
 
 // Blurs `children` behind a password prompt until unlocked. The unlock state
 // is saved to sessionStorage (not localStorage) so it clears when the browser
 // session ends, per the requirement that this re-lock on a fresh session.
-//
-// `children` is a function of the unlocked mode. While still locked the
-// blurred chart behind the prompt renders in 'current' mode — the plain chart,
-// with nothing about versions visible until someone actually unlocks it.
 export default function PasswordGate({ children }) {
-  const [mode, setMode] = useState(readStoredMode)
+  const [unlocked, setUnlocked] = useState(readUnlocked)
   const [value, setValue] = useState('')
   const [error, setError] = useState(false)
 
-  const unlocked = mode !== null
-
   const handleSubmit = (e) => {
     e.preventDefault()
-    const matched = MODES[value]
-    if (matched) {
-      sessionStorage.setItem(SESSION_KEY, matched)
-      setMode(matched)
+    if (PASSWORDS.includes(value)) {
+      sessionStorage.setItem(SESSION_KEY, UNLOCKED)
+      setUnlocked(true)
     } else {
       setError(true)
       setValue('')
@@ -53,7 +40,7 @@ export default function PasswordGate({ children }) {
         className={unlocked ? 'oc-gate-content' : 'oc-gate-content oc-gate-content--locked'}
         {...(unlocked ? {} : { inert: '' })}
       >
-        {children(mode ?? 'current')}
+        {children}
       </div>
       {!unlocked && (
         <div className="oc-gate-overlay">

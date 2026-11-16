@@ -101,8 +101,8 @@ async function main() {
       // Without this the screenshot is painted on white.
       await page('Emulation.setDefaultBackgroundColorOverride', { color: { r: 0, g: 0, b: 0, a: 0 } })
       await page('Emulation.setDeviceMetricsOverride', {
-        width: FRAME.width,
-        height: FRAME.height,
+        width: (group.frame ?? FRAME).width,
+        height: (group.frame ?? FRAME).height,
         deviceScaleFactor: scale,
         mobile: false,
       })
@@ -125,7 +125,7 @@ async function main() {
         expression: 'window.__exportSize',
         returnByValue: true,
       })
-      const size = group.fit === 'content' ? sized.value : FRAME
+      const size = group.fit === 'content' ? sized.value : (group.frame ?? FRAME)
       if (group.fit === 'content') {
         await page('Emulation.setDeviceMetricsOverride', {
           width: size.width,
