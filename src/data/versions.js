@@ -527,7 +527,7 @@ export function buildOrg() {
   // Specialist(s) under her. The specialists are people already on the team,
   // so that is a TBD card for their names, not an open role: no hire note.
   remove(d, 'emily-peterson')
-  retitle(d, 'camille-perez', 'Product Support Team Lead')
+  retitle(d, 'camille-perez', 'Team Lead - Implementation and Support')
   retitle(d, 'amber-mitchell', 'Product Support Manager')
   retitle(d, 'simon-desalvo', 'Product Support Manager')
   addReport(d, 'camille-perez', {
