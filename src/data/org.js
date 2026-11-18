@@ -74,13 +74,13 @@ export const org = p('felix-lloyd', 'Felix Lloyd', 'CEO', [
     p('jessica-fulton', 'Jessica Fulton', 'Account Executive'),
     p('amanda-taylor', 'Amanda Taylor', 'Associate Account Executive'),
     p('coley-martin', 'Coley Martin', 'Regional Sales Manager'),
-    p('lauren-brami', 'Lauren Brami', 'Business Development Team Lead', [
+    p('lauren-brami', 'Lauren Brami', 'Business Development Team Manager', [
       p('andrea-mullon', 'Andrea Mullon', 'Business Development Rep'),
       p('steven-dimiceli', 'Steven DiMiceli', 'Business Development Rep'),
       p('ciera-baker', 'Ciera Baker', 'Assoc. Business Development Rep'),
       p('jessica-molloy', 'Jessica Molloy', 'Assoc. Business Development Rep'),
     ]),
-    p('michael-kideckel', 'Michael Kideckel', 'Business Development Team Lead', [
+    p('michael-kideckel', 'Michael Kideckel', 'Business Development Team Manager', [
       p('esmy-clavel', 'Esmy Clavel', 'Business Development Rep'),
       p('akua-peprah', 'Akua Peprah', 'Assoc. Business Development Rep'),
       p('amanda-garner', 'Amanda Garner', 'Assoc. Business Development Rep'),

@@ -27,10 +27,10 @@ export const FRAME = { width: 768, height: 250 }
 const SALES_PEOPLE = {
   'coley-martin': { name: 'Coley Martin' },
   'don-giacomini': { name: 'Don Giacomini' },
-  'lauren-brami': { name: 'Lauren Brami', title: 'Business Development Team Lead - Buildings' },
+  'lauren-brami': { name: 'Lauren Brami', title: 'Business Development Team Manager - Buildings' },
   'michael-kideckel': {
     name: 'Michael Kideckel',
-    title: 'Business Development Team Lead - Districts',
+    title: 'Business Development Team Manager - Districts',
   },
 }
 
